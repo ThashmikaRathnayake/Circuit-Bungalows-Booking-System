@@ -32,9 +32,4 @@ This is a web-based booking system for the Sri Lanka Survey Department's circuit
 - Thashmika Rathnayake
 - Nethmi Kathriarachchi
 
-## License
-This project is licensed under the MIT License.
-
-## Contact
-For questions or support, please contact Thashmika Rathnayake.
 
