@@ -1,6 +1,7 @@
 import React from 'react'
 import ImageCarousel from '../components/ImageCarousel'
 import Navbar from '../components/Navbar'
+import Footer from '../components/Footer'
 
 const Homepage = () => {
   return (
@@ -15,6 +16,7 @@ const Homepage = () => {
         </p>
       </div>
         <ImageCarousel/>
+        <Footer/>
     </div>
   )
 }
