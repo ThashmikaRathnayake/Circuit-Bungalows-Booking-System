@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FaUserPlus, FaBars, FaTimes } from "react-icons/fa";
 import surveyLogo from "../assets/surveylogo.png";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";import { useNavigate } from "react-router-dom";
 import { HashLink } from 'react-router-hash-link';
 
 const Navbar = () => {
