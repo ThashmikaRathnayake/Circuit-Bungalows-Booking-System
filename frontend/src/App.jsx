@@ -1,12 +1,9 @@
 import React from "react"
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Homepage from "./pages/Homepage";
 import BookingPage from "./pages/BookingPage";
-
-
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
+import Login from "./components/Login";
+import InfoPage from "./components/InfoPage";
 
 const router = createBrowserRouter([
   {
@@ -16,9 +13,21 @@ const router = createBrowserRouter([
   {
     path: "/booking/:circuit",
     element: <BookingPage />,
-  }
-  
-]);
+    
+  },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/booking/:circuit",
+    element: <BookingPage />,
+  },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+])
 
 const App = () => {
 
