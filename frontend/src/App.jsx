@@ -19,14 +19,7 @@ const router = createBrowserRouter([
     path: "/login",
     element: <Login />,
   },
-  {
-    path: "/booking/:circuit",
-    element: <BookingPage />,
-  },
-  {
-    path: "/login",
-    element: <Login />,
-  },
+ 
 ])
 
 const App = () => {
