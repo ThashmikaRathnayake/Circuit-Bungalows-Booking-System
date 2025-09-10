@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { FaUserPlus, FaBars, FaTimes } from "react-icons/fa";
 import surveyLogo from "../assets/surveylogo.png";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const navigate = useNavigate();
 
     return (
         <nav className="bg-gray-500 h-24 flex items-center px-6 lg:px-12 justify-between relative">
@@ -46,7 +48,9 @@ const Navbar = () => {
                     </a>
                 </li>
                 <li>
-                    <button className="flex items-center text-gray-100 hover:text-gray-300 transition">
+                    <button 
+                        onClick={() => navigate("/login")}
+                        className="flex items-center text-gray-100 hover:text-gray-300 transition">
                         <FaUserPlus className="mr-1" /> Login
                     </button>
                 </li>
@@ -90,7 +94,9 @@ const Navbar = () => {
                             </a>
                         </li>
                         <li>
-                            <button className="flex items-center text-gray-100 hover:text-gray-300 transition">
+                            <button 
+                                onClick={() => navigate("/login")}
+                                className="flex items-center text-gray-100 hover:text-gray-300 transition">
                                 <FaUserPlus className="mr-1" /> Login
                             </button>
                         </li>
