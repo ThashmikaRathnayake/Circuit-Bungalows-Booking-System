@@ -8,7 +8,7 @@ const Homepage = () => {
     <div>
       <Navbar/>
       <div className="w-full text-center py-16">
-        <h1 className="text-3xl md:text-5xl font-extrabold text-gray-800 tracking-tight leading-snug">
+        <h1 className="text-3xl md:text-5xl font-extrabold text-gray-800 tracking-tight leading-snug" style={{ fontFamily: 'Poppins, sans-serif' }}>
           Circuit Bungalow Reservation System
         </h1>
         <p className="mt-4 text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">

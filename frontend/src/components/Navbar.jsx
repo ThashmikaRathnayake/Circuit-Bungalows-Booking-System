@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FaUserPlus, FaBars, FaTimes } from "react-icons/fa";
 import surveyLogo from "../assets/surveylogo.png";
 import { useNavigate } from "react-router-dom";
+import { HashLink } from 'react-router-hash-link';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -17,35 +18,35 @@ const Navbar = () => {
                 />
             </div>
 
-            <div className="absolute left-1/2 transform -translate-x-1/2 font-bold text-lg sm:text-xl md:text-2xl text-gray-100 font-sans text-center">
+            <div className="absolute left-1/2 transform -translate-x-1/2 font-bold text-lg sm:text-xl md:text-2xl text-gray-100 font-sans text-center" style={{ fontFamily: 'Poppins, sans-serif' }}>
                 Survey Department Sri Lanka
             </div>
 
             {/* desktop */}
-            <ul className="hidden lg:flex space-x-6 font-serif text-lg text-gray-100 items-center">
+            <ul className="hidden lg:flex space-x-6 text-lg text-gray-100 items-center">
                 <li>
-                    <a
-                        href="#"
+                    <HashLink smooth 
+                        to="/"
                         className="hover:text-gray-300 transition-colors duration-300"
                     >
                         Home
-                    </a>
+                     </HashLink>
                 </li>
                 <li>
-                    <a
-                        href="#"
+                    <HashLink smooth 
+                        to="/infoPage#map"
                         className="hover:text-gray-300 transition-colors duration-300"
                     >
-                        About Us
-                    </a>
+                        Map
+                     </HashLink>
                 </li>
                 <li>
-                    <a
-                        href="#"
+                    <HashLink smooth
+                        to="/infoPage#faq"
                         className="hover:text-gray-300 transition-colors duration-300"
                     >
-                        Contact
-                    </a>
+                        FAQ
+                     </HashLink>
                 </li>
                 <li>
                     <button 
@@ -70,28 +71,19 @@ const Navbar = () => {
                 <div className="absolute top-24 left-0 w-full bg-gray-600 shadow-lg lg:hidden z-50">
                     <ul className="flex flex-col items-center space-y-4 py-6 text-gray-100 font-serif text-lg">
                         <li>
-                            <a
-                                href="#"
-                                className="hover:text-gray-300 transition-colors duration-300"
-                            >
-                                Home
-                            </a>
+                            <HashLink smooth to="/" className="hover:text-gray-300 transition-colors duration-300">
+                            Home
+                            </HashLink>
                         </li>
                         <li>
-                            <a
-                                href="#"
-                                className="hover:text-gray-300 transition-colors duration-300"
-                            >
-                                About Us
-                            </a>
+                            <HashLink smooth to="/infoPage#map" className="hover:text-gray-300 transition-colors duration-300">
+                            Map
+                            </HashLink>
                         </li>
                         <li>
-                            <a
-                                href="#"
-                                className="hover:text-gray-300 transition-colors duration-300"
-                            >
-                                Contact
-                            </a>
+                            <HashLink smooth to="/infoPage#faq" className="hover:text-gray-300 transition-colors duration-300">
+                            FAQ
+                            </HashLink>
                         </li>
                         <li>
                             <button 
