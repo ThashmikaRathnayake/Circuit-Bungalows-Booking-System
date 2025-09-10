@@ -16,6 +16,7 @@ import { FiTv } from "react-icons/fi";
 import { MdOutlineLocalFireDepartment } from "react-icons/md";
 import { FaCheck } from "react-icons/fa";
 import { FaWifi } from "react-icons/fa";
+import { ImCross } from "react-icons/im";
 import img1 from '../assets/locations/Diyathalawa.jpg';
 import img2 from '../assets/locations/Anuradhapura.jpg';
 import img3 from '../assets/locations/NuwaraEliya.jpg';
@@ -48,9 +49,13 @@ const circuitsData = {
     mini_kitchen:1,
     bathrooms:2,
     acAvailable: true,
-     cb_A_available: true,
+    cb_A_available: true,
     cb_B_available: true,
-
+    // NEW FIELD for map
+    location: {
+      lat: 8.3114,  // Example latitude
+      lng: 80.4037 // Example longitude
+    }
 
   },
   "nuwaraeliya": {
@@ -60,7 +65,26 @@ const circuitsData = {
       img1,
       img10
     ],
-    description: "Luxury resort with poolside view in Nuwara Eliya..."
+    description1: "Luxury resort with poolside view in Nuwara Eliya...",
+    description2: "Enjoy a relaxing stay near Nilaveli Beach and Pigeon Island at our comfortable Circuit Bungalows (CB-A & CB-B) in Anuradhapura...",
+    survey_charges: "Rs.600",
+    land_charges: "Rs.1200",
+    other_charges: "Rs.5000",
+    welcomeDescription: "Welcome to Anuradapura Circuit Bungalow. Our well-maintained property offers a peaceful retreat near Nilaveli Beach and Pigeon Island. The bungalow is situated in a serene environment with easy access to local attractions.",
+    sleeps: 5,
+    circuit_bungalow_description: "Our spacious and comfortable bungalows offer a perfect retreat with sea and garden views. Each bungalow is designed to provide a comfortable stay for families or small groups, with all the amenities you need for a relaxing vacation.",
+    bedRooms:2,
+    Living_area:1,
+    mini_kitchen:1,
+    bathrooms:2,
+    acAvailable: true,
+    cb_No: "9876543210",
+    cb_available: false,
+    location: {
+      lat: 6.970759,
+      lng: 80.78318
+    }
+
   },
   "diyathalawa-cb": {
     name: "Diyathalawa CB",
@@ -151,15 +175,23 @@ export default function BookingPage() {
                 <h1 className="text-xl font-semibold">Contact for more details</h1>
               </div>
               <div className="flex flex-row gap-20 px-5">
-                 <div className="flex flex-row gap-2 items-center">
-                    <p className="text-lg text-gray-500">CB-A:</p>
-                    <p className="text-lg text-blue-500">{data.cb_A_No}</p>
-                 </div>
-
-                 <div className="flex flex-row gap-2 items-center">
-                    <p className="text-lg text-gray-500">CB-B:</p>
-                    <p className="text-lg text-blue-500">{data.cb_B_No}</p>
-                 </div>
+                 {data.cb_A_No && data.cb_B_No ? (
+                    <>
+                      <div className="flex flex-row gap-2 items-center">
+                        <p className="text-lg text-gray-500">CB-A:</p>
+                        <p className="text-lg text-blue-500">{data.cb_A_No}</p>
+                      </div>
+                      <div className="flex flex-row gap-2 items-center">
+                        <p className="text-lg text-gray-500">CB-B:</p>
+                        <p className="text-lg text-blue-500">{data.cb_B_No}</p>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex flex-row gap-2 items-center">
+                      <p className="text-lg text-gray-500">Contact:</p>
+                      <p className="text-lg text-blue-500">{data.cb_No}</p>
+                    </div>
+                  )}
               </div>
               <button className="w-[200px] h-[50px] rounded-lg bg-blue-700 cursor-pointer mt-10 text-white hover:bg-blue-800 ">Book this bungalow</button>
           </div>
@@ -181,13 +213,16 @@ export default function BookingPage() {
               <div className="w-full md:w-1/2 flex flex-col">
                 <h2 className="text-xl font-semibold mb-5 ">Location & Overview</h2>
                 <p className="text-lg text-gray-600 mb-10">{data.welcomeDescription}</p>
-                <Link 
-                  to=""
+                <Link
+                  to={`https://www.google.com/maps?q=${data.location.lat},${data.location.lng}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="mt-3 text-blue-600 hover:underline flex items-center gap-1"
                 >
                   <PiHouseLineLight className="text-xl" />
                   <span> Managed by the Survey Department</span>
                 </Link>
+
               </div>
 
 
@@ -301,24 +336,50 @@ export default function BookingPage() {
                   <hr className="my-4 text-gray-300" />
 
                   <div className="mt-5 mb-5">
-                    {data.cb_A_available && data.cb_B_available ? (
-                      <div className="flex flex-col">
-                        <div className="flex flex-row items-center gap-2 mb-2">
-                          <FaCheck className="text-xl text-blue-500" />
-                          <h1 className="text-xl text-blue-500">Circuit Bungalow A & B available</h1>
+                    {data.cb_A_available !== undefined && data.cb_B_available !== undefined ? (
+                      data.cb_A_available && data.cb_B_available ? (
+                        <div className="flex flex-col">
+                          <div className="flex flex-row items-center gap-2 mb-2">
+                            <FaCheck className="text-xl text-blue-500" />
+                            <h1 className="text-xl text-blue-500">Circuit Bungalow A & B available</h1>
+                          </div>
+                          <p className="text-xl">
+                            Both bungalows have identical features <br /> and amenities.
+                            You can book either one based <br /> on availability.
+                          </p>
                         </div>
-                      <p className="text-xl">
-                        Both bungalows have identical features <br/>and amenities. You can book either one based<br/> on availability.
-                      </p>
-                      </div>
+                      ) : (
+                        <div>
+                          {data.cb_A_available && <p>Bungalow A is available</p>}
+                          {data.cb_B_available && <p>Bungalow B is available</p>}
+                          {!data.cb_A_available && !data.cb_B_available && (
+                            <p>All bungalows are currently unavailable</p>
+                          )}
+                        </div>
+                      )
                     ) : (
                       <div>
-                        {data.cb_A_available && <p>Bungalow A is available</p>}
-                        {data.cb_B_available && <p>Bungalow B is available</p>}
-                        {!data.cb_A_available && !data.cb_B_available && <p>All bungalows are currently unavailable</p>}
+                        {data.cb_available ? (
+                          <div className="flex flex-col">
+                          <div className="flex flex-row items-center gap-2 mb-2">
+                            <FaCheck className="text-xl text-blue-500" />
+                            <h1 className="text-xl text-blue-500">Circuit Bungalow is available</h1>
+                          </div>
+                          <p className="text-xl">
+                            Bungalow have above included features <br /> and amenities.
+                          </p>
+                        </div>
+                        ) : (
+                          
+                          <div className="flex flex-row items-center gap-2 mb-2">
+                            <ImCross className="text-xl text-red-500" />
+                            <p  className=" text-red-500">Bungalow is currently unavailable</p>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
+
                   <hr className="my-4 text-gray-300" />
 
                 </div>
