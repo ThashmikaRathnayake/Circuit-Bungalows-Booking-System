@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FaUserPlus, FaBars, FaTimes } from "react-icons/fa";
 import surveyLogo from "../assets/surveylogo.png";
-
+import { Link } from "react-router-dom";
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
 
@@ -22,12 +22,12 @@ const Navbar = () => {
             {/* desktop */}
             <ul className="hidden lg:flex space-x-6 font-serif text-lg text-gray-100 items-center">
                 <li>
-                    <a
-                        href="#"
+                    <Link
+                        to='/'
                         className="hover:text-gray-300 transition-colors duration-300"
                     >
                         Home
-                    </a>
+                    </Link>
                 </li>
                 <li>
                     <a

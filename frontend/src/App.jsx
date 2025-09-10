@@ -1,5 +1,7 @@
 import React from "react"
 import Homepage from "./pages/Homepage";
+import BookingPage from "./pages/BookingPage";
+
 
 import {
   createBrowserRouter,
@@ -10,6 +12,10 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Homepage />,
+  },
+  {
+    path: "/booking/:circuit",
+    element: <BookingPage />,
   }
   
 ]);
