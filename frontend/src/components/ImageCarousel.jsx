@@ -46,7 +46,7 @@ function ImageCarousel() {
     }, [activeItem]);
 
     return (
-        <div className="w-full font-sans justify-center items-center flex flex-col bg-gray-100">
+        <div className="w-full justify-center items-center flex flex-col bg-gray-100" style={{ fontFamily: 'Poppins, sans-serif' }}>
             <div className="w-full max-w-7xl p-4 sm:p-6 md:p-8">
                 <ul
                     ref={wrapperRef}
