@@ -33,7 +33,7 @@ const Login = () => {
         }
 
         try {
-            const res = await axios.post("http://localhost:3000/register", {
+            const res = await axios.post("http://localhost:3000/users/register", {
                 name,
                 email,
                 password,
@@ -52,7 +52,7 @@ const Login = () => {
         e.preventDefault();
 
         try {
-            const res = await axios.post("http://localhost:3000/login", {
+            const res = await axios.post("http://localhost:3000/users/login", {
                 email,
                 password,
             });
