@@ -1,12 +1,21 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import surveyLogo from "../assets/surveylogo.png";
 
 const Login = () => {
     const [isLogin, setIsLogin] = useState(true);
     const [containerHeight, setContainerHeight] = useState(0);
 
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+
     const loginFormRef = useRef(null);
     const signupFormRef = useRef(null);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         const formRef = isLogin ? loginFormRef : signupFormRef;
@@ -14,6 +23,50 @@ const Login = () => {
             setContainerHeight(formRef.current.offsetHeight);
         }
     }, [isLogin]);
+
+    const handleSignup = async (e) => {
+        e.preventDefault();
+
+        if (password !== confirmPassword) {
+            alert("Passwords do not match");
+            return;
+        }
+
+        try {
+            const res = await axios.post("http://localhost:3000/register", {
+                name,
+                email,
+                password,
+                confirmPassword,
+            });
+            alert("User registered successfully!");
+            console.log(res.data);
+            setIsLogin(true); // switch to login form
+        } catch (err) {
+            console.error(err);
+            alert("Registration failed. Check console for details.");
+        }
+    };
+
+    const handleLogin = async (e) => {
+        e.preventDefault();
+
+        try {
+            const res = await axios.post("http://localhost:3000/login", {
+                email,
+                password,
+            });
+            console.log(res.data);
+
+            localStorage.setItem("token", res.data.token);
+
+            navigate("/");
+        } catch (err) {
+            console.error(err);
+            alert("Login failed. Check console for details.");
+        }
+    };
+
 
     return (
         <div className="flex justify-center items-center min-h-screen bg-gray-200">
@@ -63,6 +116,7 @@ const Login = () => {
                     {/* Login Form */}
                     <form
                         ref={loginFormRef}
+                        onSubmit={handleLogin}
                         className={`absolute top-0 left-0 w-full transition-all duration-500 ease-in-out ${
                             isLogin
                                 ? "opacity-100 translate-x-0 z-10"
@@ -72,12 +126,16 @@ const Login = () => {
                         <input
                             type="email"
                             placeholder="Email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             className="w-full p-3 border-b-2 border-gray-300 outline-none focus:border-gray-600 placeholder-gray-400 mb-4"
                             required
                         />
                         <input
                             type="password"
                             placeholder="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                             className="w-full p-3 border-b-2 border-gray-300 outline-none focus:border-gray-600 placeholder-gray-400 mb-4"
                             required
                         />
@@ -92,6 +150,7 @@ const Login = () => {
                     {/* Sign Up Form */}
                     <form
                         ref={signupFormRef}
+                        onSubmit={handleSignup}
                         className={`absolute top-0 left-0 w-full transition-all duration-500 ease-in-out ${
                             !isLogin
                                 ? "opacity-100 translate-x-0 z-10"
@@ -101,24 +160,32 @@ const Login = () => {
                         <input
                             type="text"
                             placeholder="Name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
                             className="w-full p-3 border-b-2 border-gray-300 outline-none focus:border-gray-600 placeholder-gray-400 mb-4"
                             required
                         />
                         <input
                             type="email"
                             placeholder="Email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             className="w-full p-3 border-b-2 border-gray-300 outline-none focus:border-gray-600 placeholder-gray-400 mb-4"
                             required
                         />
                         <input
                             type="password"
                             placeholder="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                             className="w-full p-3 border-b-2 border-gray-300 outline-none focus:border-gray-600 placeholder-gray-400 mb-4"
                             required
                         />
                         <input
                             type="password"
                             placeholder="Confirm Password"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
                             className="w-full p-3 border-b-2 border-gray-300 outline-none focus:border-gray-600 placeholder-gray-400 mb-4"
                             required
                         />
