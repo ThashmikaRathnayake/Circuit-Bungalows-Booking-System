@@ -1,12 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect  } from "react";
 import { FaUserPlus, FaBars, FaTimes } from "react-icons/fa";
 import surveyLogo from "../assets/surveylogo.png";
 import { Link } from "react-router-dom";import { useNavigate } from "react-router-dom";
 import { HashLink } from 'react-router-hash-link';
+import { FaSignOutAlt } from 'react-icons/fa';
+
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const navigate = useNavigate();
+
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        setIsLoggedIn(!!token);
+    }, []);
+
+    const handleLogout = () => {
+        localStorage.removeItem("token"); 
+        setIsLoggedIn(false); 
+        navigate("/login"); 
+    };
 
     return (
         <nav className="bg-gray-500 h-24 flex items-center px-6 lg:px-12 justify-between relative">
@@ -49,12 +64,20 @@ const Navbar = () => {
                      </HashLink>
                 </li>
                 <li>
-                    <button 
-                        onClick={() => navigate("/login")}
-                        className="flex items-center text-gray-100 hover:text-gray-300 transition">
-                        <FaUserPlus className="mr-1" /> Login
-                    </button>
+                    {!isLoggedIn ? (
+                        <button 
+                            onClick={() => navigate("/login")}
+                            className="flex items-center text-gray-100 hover:text-gray-300 transition"
+                        >
+                            <FaUserPlus className="mr-1" /> Login
+                        </button>
+                    ) : (
+                        <button className="flex items-center text-gray-100 hover:text-gray-300 transition" onClick={handleLogout}>
+                            <FaSignOutAlt className="mr-1" /> Sign Out
+                        </button>
+                    )}
                 </li>
+
             </ul>
 
             {/* mobile + tablets */}
@@ -86,11 +109,21 @@ const Navbar = () => {
                             </HashLink>
                         </li>
                         <li>
-                            <button 
-                                onClick={() => navigate("/login")}
-                                className="flex items-center text-gray-100 hover:text-gray-300 transition">
-                                <FaUserPlus className="mr-1" /> Login
-                            </button>
+                            {!isLoggedIn ? (
+                                <button 
+                                    onClick={() => navigate("/login")}
+                                    className="flex items-center text-gray-100 hover:text-gray-300 transition"
+                                >
+                                    <FaUserPlus className="mr-1" /> Login
+                                </button>
+                            ) : (
+                                <button 
+                                    onClick={handleLogout}
+                                    className="flex items-center text-gray-100 hover:text-gray-300 transition"
+                                >
+                                    Logout
+                                </button>
+                            )}
                         </li>
                     </ul>
                 </div>
