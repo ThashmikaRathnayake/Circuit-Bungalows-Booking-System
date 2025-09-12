@@ -1,16 +1,17 @@
 import React, { useState } from "react";
 import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
-import { Maximize2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Maximize2, Minimize2, ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function GalleryCarousel({ images }) {
   const [nav1, setNav1] = useState(null);
+  const [nav2, setNav2] = useState(null);
   const [fullscreen, setFullscreen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  // Main slider settings
   const settingsMain = {
+    asNavFor: nav2,
     ref: (slider) => setNav1(slider),
     arrows: true,
     prevArrow: <SamplePrevArrow />,
@@ -20,46 +21,72 @@ export default function GalleryCarousel({ images }) {
     beforeChange: (oldIndex, newIndex) => setActiveIndex(newIndex),
   };
 
+  const settingsThumbs = {
+    asNavFor: nav1,
+    ref: (slider) => setNav2(slider),
+    slidesToShow: 3,
+    swipeToSlide: true,
+    focusOnSelect: true,
+    vertical: true,
+    arrows: false,
+    centerMode: false,
+  };
+
   return (
-    <div className={`flex gap-4 mx-auto relative mb-10 ${fullscreen ? "fixed inset-0 z-50 bg-black p-4 items-center justify-center" : "max-w-[1800px] h-[600px]"}`}>
+    <div
+      className={`flex gap-4 max-w-[1800px] h-[600px] relative mb-10
+    ${fullscreen 
+      ? "fixed inset-0 z-50 bg-black flex justify-center items-center h-screen w-full" 
+      : "mx-auto mb-10"}`
+  }
+    >
       {/* Main Slider */}
-      <div className={`w-3/4 relative ${fullscreen ? "h-full" : "h-[600px]"}`}>
+      <div className={`relative ${fullscreen ? "w-full h-full" : "w-3/4"}`}>
         <Slider {...settingsMain}>
           {images.map((img, idx) => (
-            <div key={idx}>
+            <div key={idx} className="flex justify-center items-center h-full">
               <img
                 src={img}
                 alt={`Slide ${idx}`}
-                className={`w-full ${fullscreen ? "h-screen" : "h-[600px]"} object-cover rounded-xl`}
+                className={`${
+                  fullscreen
+                    ? "object-contain w-full h-screen"
+                    : "w-full h-[600px] object-cover rounded-xl"
+                }`}
               />
             </div>
           ))}
         </Slider>
 
-        {/* Fullscreen Button */}
+        {/* Fullscreen Toggle Button */}
         <button
           onClick={() => setFullscreen(!fullscreen)}
           className="absolute top-3 right-3 bg-white p-2 rounded-full shadow z-50"
         >
-          <Maximize2 size={18} />
+          {fullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
         </button>
       </div>
 
-      {/* Thumbnails */}
-      {!fullscreen && (
-        <div className="w-1/4 flex flex-col h-[600px] gap-2 overflow-y-auto">
-          {images.map((img, idx) => (
-            <div
-              key={idx}
-              className={`flex-1 rounded-lg overflow-hidden cursor-pointer border-2 transition-all duration-200
-            ${activeIndex === idx ? "border-blue-500" : "border-transparent"}`}
-              onClick={() => nav1.slickGoTo(idx)}
-            >
-              <img src={img} alt={`Thumb ${idx}`} className="w-full h-full object-cover" />
-            </div>
-          ))}
-        </div>
-      )}
+      {/* Thumbnails (hidden in fullscreen) */}
+        {!fullscreen && (
+          <div className="w-1/4 h-[600px] flex flex-col gap-2">
+            {images.map((img, idx) => (
+              <div
+                key={idx}
+                className={`flex-1 rounded-lg overflow-hidden cursor-pointer border-2 transition-all duration-200
+                  ${activeIndex === idx ? "border-blue-500" : "border-transparent"}`}
+                onClick={() => nav1.slickGoTo(idx)}
+              >
+                <img
+                  src={img}
+                  alt={`Thumb ${idx}`}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ))}
+          </div>
+        )}
+
     </div>
   );
 }
