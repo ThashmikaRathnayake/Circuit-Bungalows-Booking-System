@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
@@ -23,6 +23,20 @@ const faqs = [
   { question: "What facilities are available?", answer: "All bungalows provide basic amenities, including beds, clean washrooms, electricity, and scenic surroundings." },
   { question: "Can I cancel or modify my booking?", answer: "Yes, you can modify or cancel your bookings by logging into your account and managing your reservations." },
 ];
+
+const FlyToMarker = ({ position, children }) => {
+  const map = useMap();
+
+  const handleClick = () => {
+    map.flyTo(position, 12, { duration: 1.5 }); // zoom to level 12 smoothly
+  };
+
+  return (
+    <Marker position={position} icon={darkMarker} eventHandlers={{ click: handleClick }}>
+      {children}
+    </Marker>
+  );
+};
 
 const InfoPage = () => {
   const [openIndex, setOpenIndex] = useState(null);
@@ -73,7 +87,7 @@ const InfoPage = () => {
               attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
             />
             {bungalows.map((b, i) => (
-              <Marker key={i} position={b.position} icon={darkMarker}>
+              <FlyToMarker key={i} position={b.position} icon={darkMarker}>
                 <Popup className="bg-gray-200 text-gray-800 rounded-lg p-4 shadow-md">
                   <h3 className="font-bold text-lg">{b.name}</h3>
                   <p className="my-2">{b.description}</p>
@@ -82,7 +96,7 @@ const InfoPage = () => {
                     <button className="bg-gray-100 hover:bg-gray-200 border border-gray-300 px-3 py-1 rounded-md transition">Book Now</button>
                   </div>
                 </Popup>
-              </Marker>
+              </FlyToMarker>
             ))}
           </MapContainer>
         </div>
