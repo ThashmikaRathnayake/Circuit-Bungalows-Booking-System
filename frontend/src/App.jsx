@@ -4,6 +4,7 @@ import Homepage from "./pages/Homepage";
 import Login from "./components/Login";
 import InfoPage from "./components/InfoPage";
 import BookingPage from "./pages/BookingPage";
+import AdminDashboard from "./pages/AdminDashboard";
 
 const router = createBrowserRouter([
   {
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
   {
     path: "/booking/:circuit", 
     element: <BookingPage />
+  },
+  {
+    path: "/admin",
+    element: <AdminDashboard/>
   }
   
 ]);
