@@ -63,7 +63,11 @@ const Login = () => {
             navigate("/");
         } catch (err) {
             console.error(err);
-            alert("Login failed. Check console for details.");
+            if (err.response && err.response.data && err.response.data.error) {
+                alert(err.response.data.error);
+            } else {
+                alert("Login failed. Please try again.");
+            }
         }
     };
 
