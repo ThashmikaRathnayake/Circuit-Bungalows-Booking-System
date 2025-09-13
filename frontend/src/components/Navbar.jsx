@@ -64,6 +64,14 @@ const Navbar = () => {
                      </HashLink>
                 </li>
                 <li>
+                    <HashLink smooth
+                        to="/infoPage#rules"
+                        className="hover:text-gray-300 transition-colors duration-300"
+                    >
+                        Rules
+                     </HashLink>
+                </li>
+                <li>
                     {!isLoggedIn ? (
                         <button 
                             onClick={() => navigate("/login")}
