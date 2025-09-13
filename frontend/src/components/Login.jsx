@@ -58,9 +58,16 @@ const Login = () => {
             });
             console.log(res.data);
 
+            // Save token and user role in localStorage
             localStorage.setItem("token", res.data.token);
+            localStorage.setItem("userRole", res.data.user.role);
 
-            navigate("/");
+            // Navigate based on role
+            if (res.data.user.role === "admin") {
+                navigate("/admin"); // admin dashboard
+            } else {
+                navigate("/"); // normal user homepage
+            }
         } catch (err) {
             console.error(err);
             if (err.response && err.response.data && err.response.data.error) {

@@ -1,7 +1,7 @@
-import React, { useState, useEffect  } from "react";
+import React, { useState, useEffect } from "react";
 import { FaUserPlus, FaBars, FaTimes } from "react-icons/fa";
 import surveyLogo from "../assets/surveylogo.png";
-import { Link } from "react-router-dom";import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom"; import { useNavigate } from "react-router-dom";
 import { HashLink } from 'react-router-hash-link';
 import { FaSignOutAlt } from 'react-icons/fa';
 
@@ -12,15 +12,24 @@ const Navbar = () => {
 
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+    const [userRole, setUserRole] = useState(null);
+
     useEffect(() => {
         const token = localStorage.getItem("token");
         setIsLoggedIn(!!token);
     }, []);
 
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        const role = localStorage.getItem("userRole"); // get saved role
+        setIsLoggedIn(!!token);
+        setUserRole(role);
+    }, []);
+
     const handleLogout = () => {
-        localStorage.removeItem("token"); 
-        setIsLoggedIn(false); 
-        navigate("/login"); 
+        localStorage.removeItem("token");
+        setIsLoggedIn(false);
+        navigate("/login");
     };
 
     return (
@@ -39,54 +48,57 @@ const Navbar = () => {
 
             {/* desktop */}
             <ul className="hidden lg:flex space-x-6 text-lg text-gray-100 items-center">
+                {userRole === "admin" ? (
+                    <>
+                        <li>
+                            <Link to="/admin" className="hover:text-gray-300 transition-colors duration-300">
+                                Requests
+                            </Link>
+                        </li>
+                        <li>
+                            <Link to="/admin" className="hover:text-gray-300 transition-colors duration-300">
+                                Update
+                            </Link>
+                        </li>
+                    </>
+                ) : (
+                    <>
+                        <li>
+                            <HashLink smooth to="/" className="hover:text-gray-300 transition-colors duration-300">
+                                Home
+                            </HashLink>
+                        </li>
+                        <li>
+                            <HashLink smooth to="/infoPage#map" className="hover:text-gray-300 transition-colors duration-300">
+                                Map
+                            </HashLink>
+                        </li>
+                        <li>
+                            <HashLink smooth to="/infoPage#faq" className="hover:text-gray-300 transition-colors duration-300">
+                                FAQ
+                            </HashLink>
+                        </li>
+                        <li>
+                            <HashLink smooth to="/infoPage#rules" className="hover:text-gray-300 transition-colors duration-300">
+                                Rules
+                            </HashLink>
+                        </li>
+                    </>
+                )}
+
                 <li>
-                    <HashLink smooth 
-                        to="/"
-                        className="hover:text-gray-300 transition-colors duration-300"
-                    >
-                        Home
-                     </HashLink>
-                </li>
-                <li>
-                    <HashLink smooth 
-                        to="/infoPage#map"
-                        className="hover:text-gray-300 transition-colors duration-300"
-                    >
-                        Map
-                     </HashLink>
-                </li>
-                <li>
-                    <HashLink smooth
-                        to="/infoPage#faq"
-                        className="hover:text-gray-300 transition-colors duration-300"
-                    >
-                        FAQ
-                     </HashLink>
-                </li>
-                <li>
-                    <HashLink smooth
-                        to="/infoPage#rules"
-                        className="hover:text-gray-300 transition-colors duration-300"
-                    >
-                        Rules
-                     </HashLink>
-                </li>
-                <li>
-                    {!isLoggedIn ? (
-                        <button 
-                            onClick={() => navigate("/login")}
-                            className="flex items-center text-gray-100 hover:text-gray-300 transition"
-                        >
-                            <FaUserPlus className="mr-1" /> Login
+                    {isLoggedIn ? (
+                        <button className="flex items-center text-gray-100 hover:text-gray-300 transition" onClick={handleLogout}>
+                            <FaSignOutAlt className="mr-1" /> Logout
                         </button>
                     ) : (
-                        <button className="flex items-center text-gray-100 hover:text-gray-300 transition" onClick={handleLogout}>
-                            <FaSignOutAlt className="mr-1" /> Sign Out
+                        <button onClick={() => navigate("/login")} className="flex items-center text-gray-100 hover:text-gray-300 transition">
+                            <FaUserPlus className="mr-1" /> Login
                         </button>
                     )}
                 </li>
-
             </ul>
+
 
             {/* mobile + tablets */}
             <div className="lg:hidden">
@@ -101,39 +113,57 @@ const Navbar = () => {
             {isOpen && (
                 <div className="absolute top-24 left-0 w-full bg-gray-600 shadow-lg lg:hidden z-50">
                     <ul className="flex flex-col items-center space-y-4 py-6 text-gray-100 font-serif text-lg">
+                        {userRole === "admin" ? (
+                            <>
+                                <li>
+                                    <Link to="/admin" className="hover:text-gray-300 transition-colors duration-300">
+                                        Requests
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link to="/admin" className="hover:text-gray-300 transition-colors duration-300">
+                                        Update
+                                    </Link>
+                                </li>
+                            </>
+                        ) : (
+                            <>
+                                <li>
+                                    <HashLink smooth to="/" className="hover:text-gray-300 transition-colors duration-300">
+                                        Home
+                                    </HashLink>
+                                </li>
+                                <li>
+                                    <HashLink smooth to="/infoPage#map" className="hover:text-gray-300 transition-colors duration-300">
+                                        Map
+                                    </HashLink>
+                                </li>
+                                <li>
+                                    <HashLink smooth to="/infoPage#faq" className="hover:text-gray-300 transition-colors duration-300">
+                                        FAQ
+                                    </HashLink>
+                                </li>
+                                <li>
+                                    <HashLink smooth to="/infoPage#rules" className="hover:text-gray-300 transition-colors duration-300">
+                                        Rules
+                                    </HashLink>
+                                </li>
+                            </>
+                        )}
+
                         <li>
-                            <HashLink smooth to="/" className="hover:text-gray-300 transition-colors duration-300">
-                            Home
-                            </HashLink>
-                        </li>
-                        <li>
-                            <HashLink smooth to="/infoPage#map" className="hover:text-gray-300 transition-colors duration-300">
-                            Map
-                            </HashLink>
-                        </li>
-                        <li>
-                            <HashLink smooth to="/infoPage#faq" className="hover:text-gray-300 transition-colors duration-300">
-                            FAQ
-                            </HashLink>
-                        </li>
-                        <li>
-                            {!isLoggedIn ? (
-                                <button 
-                                    onClick={() => navigate("/login")}
-                                    className="flex items-center text-gray-100 hover:text-gray-300 transition"
-                                >
-                                    <FaUserPlus className="mr-1" /> Login
+                            {isLoggedIn ? (
+                                <button className="flex items-center text-gray-100 hover:text-gray-300 transition" onClick={handleLogout}>
+                                    Logout
                                 </button>
                             ) : (
-                                <button 
-                                    onClick={handleLogout}
-                                    className="flex items-center text-gray-100 hover:text-gray-300 transition"
-                                >
-                                    Logout
+                                <button onClick={() => navigate("/login")} className="flex items-center text-gray-100 hover:text-gray-300 transition">
+                                    Login
                                 </button>
                             )}
                         </li>
                     </ul>
+
                 </div>
             )}
         </nav>
