@@ -5,6 +5,7 @@ import Login from "./components/Login";
 import InfoPage from "./components/InfoPage";
 import BookingPage from "./pages/BookingPage";
 import AdminDashboard from "./pages/AdminDashboard";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const router = createBrowserRouter([
   {
@@ -15,18 +16,30 @@ const router = createBrowserRouter([
     path: "/login",
     element: <Login />,
   },
+
+  //Protected Routes
   {
+    element: <ProtectedRoute allowedRoles={['user']} />,
+    children: [
+      {
     path: "/infoPage",
     element: <InfoPage />
   },
   {
     path: "/booking/:circuit", 
     element: <BookingPage />
+  } ]
   },
+  
   {
-    path: "/admin",
-    element: <AdminDashboard/>
+    element: <ProtectedRoute allowedRoles={['admin']} />,
+    children: [
+      {
+        path: "/admin",
+        element: <AdminDashboard/>
+      } ]
   }
+  
   
 ]);
 
