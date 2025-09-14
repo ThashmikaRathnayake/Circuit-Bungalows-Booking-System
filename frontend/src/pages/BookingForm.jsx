@@ -3,6 +3,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import logoLeft from '../assets/surveylogo.png'
 import logoRight from '../assets/national-emblem-sri-lankan.png'
+import MediaUpload from "../Utils/MediaUpload";
 
 export default function BookingForm() {
   const [formData, setFormData] = useState({
@@ -25,7 +26,8 @@ export default function BookingForm() {
     leaveTo: "",
     leaveDays: "",
     substitutes: [{ name: "", nic: "", designation: "", department: "" }],
-    applicantSignature: "",
+    retiredIdCard: [],
+    applicantSignature: [],
     applicantDate: "",
   });
 
@@ -46,20 +48,58 @@ export default function BookingForm() {
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(formData);
+  const handleFileChange = (e, fieldName) => {
+    setFormData({ ...formData, [fieldName]: Array.from(e.target.files), });
   };
+
+
+ async function handleSubmit(e) {
+    e.preventDefault();
+
+    const promisesArray = [];
+
+    // Upload retired ID card(s)
+    for (let i = 0; i < formData.retiredIdCard.length; i++) {
+      promisesArray.push(MediaUpload(formData.retiredIdCard[i]));
+    }
+
+    // Upload applicant signature(s)
+    for (let i = 0; i < formData.applicantSignature.length; i++) {
+      promisesArray.push(MediaUpload(formData.applicantSignature[i]));
+    }
+
+    try {
+      const responses = await Promise.all(promisesArray);
+      console.log("All uploaded:", responses);
+
+      // responses will be an array of uploaded file URLs/paths
+      // you can split them like this:
+      const retiredIdUrls = responses.slice(0, formData.retiredIdCard.length);
+      const signatureUrls = responses.slice(formData.retiredIdCard.length);
+
+      const payload = {
+        ...formData,
+        retiredIdCard: retiredIdUrls,
+        applicantSignature: signatureUrls,
+      };
+
+      console.log("Final form payload:", payload);
+      // TODO: insert payload into Supabase bookings table
+
+
+    } catch (error) {
+      console.error("Upload error:", error);
+    }
+  }
 
   return (
    <div className="bg-[#F8FAFC]"> 
     <Navbar />
     <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg my-10">
       <div className="flex items-center justify-between mb-6 border-b pb-4">
-      {/* Left Logo */}
+
       <img src={logoLeft} alt="Survey Dept Logo" className="h-16 w-16 object-contain" />
 
-      {/* Title Section */}
       <div className="text-center flex-1">
         <h1 className="text-xl font-bold uppercase">
           Survey Department of Sri Lanka
@@ -69,24 +109,20 @@ export default function BookingForm() {
         </h2>
       </div>
 
-      {/* Right Logo */}
       <img src={logoRight} alt="Govt Logo" className="h-16 w-16 object-contain" />
     </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Full Name */}
         <div>
           <label className="block font-medium">Full Name</label>
           <input name="fullName" value={formData.fullName} onChange={handleChange} className="w-full p-2 border rounded" />
         </div>
 
-        {/* NIC */}
         <div>
           <label className="block font-medium">NIC / Employee No</label>
           <input name="nic" value={formData.nic} onChange={handleChange} className="w-full p-2 border rounded" />
         </div>
 
-        {/* Address */}
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block font-medium">Address (Official)</label>
@@ -98,7 +134,6 @@ export default function BookingForm() {
           </div>
         </div>
 
-        {/* Phone */}
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block font-medium">Telephone (Official)</label>
@@ -110,7 +145,6 @@ export default function BookingForm() {
           </div>
         </div>
 
-        {/* Position Nature */}
         <div>
           <label className="block font-medium">Nature of Position</label>
           <div className="flex gap-6">
@@ -128,7 +162,6 @@ export default function BookingForm() {
           </div>
         </div>
 
-        {/* Conditional Employment Info */}
         {formData.positionNature === "active" && (
           <div className="space-y-4">
             <div>
@@ -156,19 +189,28 @@ export default function BookingForm() {
           </div>
         )}
 
-        {/* Appointment */}
+        {formData.positionNature === "retired" && (
+            <div className="mt-4">
+                <label className="block font-medium">Upload Retired ID Card</label>
+                <input
+                type="file" multiple
+                accept="image/*,application/pdf"
+                onChange={(e) => handleFileChange(e, "retiredIdCard")}
+                className="w-full p-2 border rounded"
+                />
+            </div>
+            )}
+
         <div>
           <label className="block font-medium">Date of Appointment</label>
           <input type="date" name="appointmentDate" value={formData.appointmentDate} onChange={handleChange} className="p-2 border rounded" />
         </div>
 
-        {/* Requested Bungalow */}
         <div>
           <label className="block font-medium">Requested Circuit Bungalow</label>
           <input name="requestedBungalow" value={formData.requestedBungalow} onChange={handleChange} className="w-full p-2 border rounded" />
         </div>
 
-        {/* Leave Type */}
         <div>
           <label className="block font-medium">Type of Leave Requested</label>
           <div className="flex gap-6">
@@ -186,7 +228,6 @@ export default function BookingForm() {
           </div>
         </div>
 
-        {/* Duration */}
         <div className="grid grid-cols-3 gap-4">
           <div>
             <label className="block font-medium">From</label>
@@ -202,7 +243,6 @@ export default function BookingForm() {
           </div>
         </div>
 
-        {/* Substitute Table */}
         <div>
           <label className="block font-medium mb-2">Substitute Person Details</label>
           <table className="w-full border border-collapse">
@@ -236,11 +276,10 @@ export default function BookingForm() {
           </button>
         </div>
 
-        {/* Signature */}
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block font-medium">Applicant Signature</label>
-            <input name="applicantSignature" value={formData.applicantSignature} onChange={handleChange} className="w-full p-2 border rounded" />
+            <input type="file" multiple accept="image/*,application/pdf" onChange={(e) => handleFileChange(e, "applicantSignatureFile")} className="w-full p-2 border rounded"/>
           </div>
           <div>
             <label className="block font-medium">Date</label>
