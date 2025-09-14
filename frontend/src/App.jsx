@@ -6,6 +6,7 @@ import InfoPage from "./components/InfoPage";
 import BookingPage from "./pages/BookingPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
+import BookingForm from "./pages/BookingForm";
 
 const router = createBrowserRouter([
   {
@@ -15,6 +16,11 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
+  },
+
+  {
+    path: "/bookingForm",
+    element: <BookingForm />,
   },
 
   //Protected Routes
