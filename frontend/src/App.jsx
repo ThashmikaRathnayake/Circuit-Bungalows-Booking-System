@@ -1,5 +1,6 @@
 import React from "react"
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Toaster } from 'react-hot-toast';
 import Homepage from "./pages/Homepage";
 import Login from "./components/Login";
 import InfoPage from "./components/InfoPage";
@@ -53,7 +54,10 @@ const App = () => {
 
   return (
     <>
+    <div>
+      <Toaster position="top-right" />
       <RouterProvider router={router} />
+    </div>
     </>
   )
 }

@@ -4,6 +4,9 @@ import Footer from '../components/Footer';
 import logoLeft from '../assets/surveylogo.png'
 import logoRight from '../assets/national-emblem-sri-lankan.png'
 import MediaUpload from "../Utils/MediaUpload";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 export default function BookingForm() {
   const [formData, setFormData] = useState({
@@ -30,6 +33,8 @@ export default function BookingForm() {
     applicantSignature: [],
     applicantDate: "",
   });
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -84,8 +89,18 @@ export default function BookingForm() {
       };
 
       console.log("Final form payload:", payload);
-      // TODO: insert payload into Supabase bookings table
 
+      // save to MongoDB
+       axios.post("http://localhost:3000/bookings", payload)
+      .then((res) => {
+        console.log("Form submitted successfully:", res.data);
+        toast.success("Form submitted successfully!");
+        navigate("/")
+      })
+      .catch((err) => {
+        console.error("Error submitting form:", err);
+        toast.error("Error submitting form. Please try again.");
+      });
 
     } catch (error) {
       console.error("Upload error:", error);
@@ -279,14 +294,14 @@ export default function BookingForm() {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block font-medium">Applicant Signature</label>
-            <input type="file" multiple accept="image/*,application/pdf" onChange={(e) => handleFileChange(e, "applicantSignatureFile")} className="w-full p-2 border rounded"/>
+            <input type="file" multiple accept="image/*,application/pdf" onChange={(e) => handleFileChange(e, "applicantSignature")} className="w-full p-2 border rounded"/>
           </div>
           <div>
             <label className="block font-medium">Date</label>
             <input type="date" name="applicantDate" value={formData.applicantDate} onChange={handleChange} className="w-full p-2 border rounded" />
           </div>
         </div>
-        <button type="submit" className="w-full bg-green-600 text-white py-2 rounded mt-8">Submit</button>
+        <button type="submit" className="w-full bg-green-600 text-white py-2 rounded mt-8 cursor-pointer">Submit</button>
       </form>
     </div>
      <Footer />
