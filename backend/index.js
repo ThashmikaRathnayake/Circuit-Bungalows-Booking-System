@@ -61,7 +61,7 @@ mongoose.connect(connectionString).then(
 )
 
 app.use('/users', userRouter);
-app.use('/bookings',bookingRouter)
+app.use('/admin',bookingRouter)
  
 app.listen(3000, () => {
   console.log('Server is running on port 3000')

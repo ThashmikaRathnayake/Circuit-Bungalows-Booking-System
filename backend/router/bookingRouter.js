@@ -4,7 +4,7 @@ import { createBooking, getBookingById, getBookings } from '../Controller/bookin
 const bookingRouter = express.Router();
 
 bookingRouter.post("/",createBooking)
-bookingRouter.get("/", getBookings);        
+bookingRouter.get("/requests", getBookings);        
 bookingRouter.get("/:id", getBookingById); 
 
 export default bookingRouter;

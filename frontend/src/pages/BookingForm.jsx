@@ -91,15 +91,15 @@ export default function BookingForm() {
       console.log("Final form payload:", payload);
 
       // save to MongoDB
-       axios.post("http://localhost:3000/bookings", payload)
+       axios.post("http://localhost:3000/admin", payload)
       .then((res) => {
         console.log("Form submitted successfully:", res.data);
-        toast.success("Form submitted successfully!");
+        toast.success("Booking request submitted successfully!");
         navigate("/")
       })
       .catch((err) => {
         console.error("Error submitting form:", err);
-        toast.error("Error submitting form. Please try again.");
+        toast.error("Error submitting request. Please try again.");
       });
 
     } catch (error) {

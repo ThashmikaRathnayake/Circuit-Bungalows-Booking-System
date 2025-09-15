@@ -13,7 +13,8 @@ import img4 from '../assets/locations/Jaffna.jpg';
 import img8 from '../assets/locations/Kuchchaveli.jpg';
 import img9 from '../assets/locations/Pasikudah.jpg';
 import img10 from '../assets/locations/Girithale.jpg';
-import { HashLink } from "react-router-hash-link";
+import { HashLink, } from "react-router-hash-link";
+import { useNavigate } from "react-router-dom";
 import { Accordion, AccordionItem } from "../components/Accordion";
 
 // Data for all circuits
@@ -88,6 +89,8 @@ const circuitsData = {
 export default function BookingPage() {
   const { circuit } = useParams(); // get circuit from URL
   const data = circuitsData[circuit.toLowerCase()]; // lookup data
+
+  const navigate = useNavigate();
 
   if (!data) {
     return (
@@ -208,7 +211,7 @@ export default function BookingPage() {
                   )}
                 </div>
                 <div className="flex gap-10">
-                  <button className="w-[200px] h-[50px] rounded-lg bg-gray-700 cursor-pointer mt-10 text-white hover:bg-gray-500 ">Book this bungalow</button>
+                  <button className="w-[200px] h-[50px] rounded-lg bg-gray-700 cursor-pointer mt-10 text-white hover:bg-gray-500 " onClick={()=>{navigate("/bookingForm")}}>Book this bungalow</button>
                   <button className="w-[200px] h-[50px] rounded-lg mt-10 bg-gray-700 text-white hover:bg-gray-500 cursor-pointer">Check Availability</button>
                 </div>
               </div>
