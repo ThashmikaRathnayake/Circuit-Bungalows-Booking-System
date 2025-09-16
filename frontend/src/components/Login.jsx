@@ -64,9 +64,9 @@ const Login = () => {
 
             // Navigate based on role
             if (res.data.user.role === "admin") {
-                navigate("/admin"); // admin dashboard
+                navigate("/admin",{ replace: true }); // admin dashboard
             } else {
-                navigate("/"); // normal user homepage
+                navigate("/", { replace: true }); // normal user homepage
             }
         } catch (err) {
             console.error(err);

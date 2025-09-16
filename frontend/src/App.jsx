@@ -1,5 +1,5 @@
 import React from "react"
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 import { Toaster } from 'react-hot-toast';
 import Homepage from "./pages/Homepage";
 import Login from "./components/Login";
@@ -10,9 +10,22 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import BookingForm from "./pages/BookingForm";
 import BookingDetails from "./components/BookingDetails";
 
+const RootRedirect = () => {
+  const token = localStorage.getItem("token");
+  const role = localStorage.getItem("userRole");
+
+  if (!token) return <Navigate to="/login" replace />;
+  if (role === "admin") return <Navigate to="/admin" replace />;
+  return <Navigate to="/home" replace />; 
+};
+
 const router = createBrowserRouter([
   {
     path: "/",
+    element: <RootRedirect />,
+  },
+  {
+    path: "/home",
     element: <Homepage />,
   },
   {

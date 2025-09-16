@@ -16,12 +16,7 @@ const Navbar = () => {
 
     useEffect(() => {
         const token = localStorage.getItem("token");
-        setIsLoggedIn(!!token);
-    }, []);
-
-    useEffect(() => {
-        const token = localStorage.getItem("token");
-        const role = localStorage.getItem("userRole"); // get saved role
+        const role = localStorage.getItem("userRole");
         setIsLoggedIn(!!token);
         setUserRole(role);
     }, []);
