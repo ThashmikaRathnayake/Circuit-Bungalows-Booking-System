@@ -16,7 +16,8 @@ const AdminDashboard = () => {
       const res = await axios.get("http://localhost:3000/admin/requests", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setRequests(res.data);
+      console.log(res.data);
+      setRequests(res.data.bookings || []);
     } catch (err) {
       console.error(err);
     }
