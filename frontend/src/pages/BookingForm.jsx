@@ -8,6 +8,25 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
+const bungalowPrices = {
+  "diyathalawa CB 01": { survey: 500, land: 1000, other: 5000 },
+  "diyathalawa CB 02": { survey: 500, land: 1000, other: 3000 },
+  "diyathalawa CB 03": { survey: 300, land: 500, other: 1200 },
+  "diyathalawa HQ 41": { survey: 300, land: 500, other: 1200 },
+  "diyathalawa HQ 38": { survey: 300, land: 500, other: 1200 },
+  "diyathalawa HQ 45": { survey: 300, land: 500, other: 1200 },
+  "anuradapura CB": { survey: 500, land: 1000, other: 3500 },
+  "nuwara eliya CB": { survey: 500, land: 1000, other: 3500 },
+  "jaffna CB": { survey: 300, land: 1000, other: null },
+  "ampara CB": { survey: 300, land: 500, other: 1200 },
+  "katharagama CB": { survey: 500, land: 1000, other: 1500 },
+  "girithale CB": { survey: 600, land: 1200, other: null },
+  "kuchchaveli CB-A": { survey: 600, land: 1200, other: 5000 },
+  "kuchchaveli CB-B": { survey: 600, land: 1200, other: 5000 },
+  "Other": { survey: 600, land: 1200, other: 0 }, // fallback
+};
+
+
 export default function BookingForm() {
   const [formData, setFormData] = useState({
     fullName: "",
@@ -33,6 +52,47 @@ export default function BookingForm() {
     applicantSignature: [],
     applicantDate: "",
   });
+  const [errors, setErrors] = useState({});
+
+  const validateForm = () => {
+  let newErrors = {};
+
+  if (!formData.fullName.trim()) {
+    newErrors.fullName = "Full Name is required";
+  }
+
+  if (!formData.nic.trim()) {
+    newErrors.nic = "NIC/Employee No is required";
+  } else if (formData.nic.length < 10) {
+    newErrors.nic = "NIC must be at least 10 characters";
+  }
+
+  if (!formData.phonePersonal.trim()) {
+    newErrors.phonePersonal = "Personal phone is required";
+  } else if (!/^[0-9]{10}$/.test(formData.phonePersonal)) {
+    newErrors.phonePersonal = "Phone must be 10 digits";
+  }
+
+  if (!formData.requestedBungalow.trim()) {
+    newErrors.requestedBungalow = "Requested bungalow is required";
+  }
+
+  if (!formData.leaveFrom || !formData.leaveTo) {
+    newErrors.leave = "Leave dates are required";
+  } else if (new Date(formData.leaveFrom) > new Date(formData.leaveTo)) {
+    newErrors.leave = "Leave From cannot be after Leave To";
+  }
+
+  if (!formData.applicantDate) {
+    newErrors.applicantDate = "Applicant date is required";
+  }
+
+  setErrors(newErrors);
+
+  // if object is empty -> valid
+  return Object.keys(newErrors).length === 0;
+};
+
 
   const navigate = useNavigate();
 
@@ -60,6 +120,11 @@ export default function BookingForm() {
 
  async function handleSubmit(e) {
     e.preventDefault();
+
+    if (!validateForm()) {
+    toast.error("Please fix the errors before submitting");
+    return;
+  }
 
     const promisesArray = [];
 
@@ -131,32 +196,35 @@ export default function BookingForm() {
         <div>
           <label className="block font-medium">Full Name</label>
           <input name="fullName" value={formData.fullName} onChange={handleChange} className="w-full p-2 border rounded" />
+          {errors.fullName && <p className="text-red-500 text-sm">{errors.fullName}</p>}
         </div>
 
         <div>
           <label className="block font-medium">NIC / Employee No</label>
           <input name="nic" value={formData.nic} onChange={handleChange} className="w-full p-2 border rounded" />
+          {errors.nic && <p className="text-red-500 text-sm">{errors.nic}</p>}
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block font-medium">Address (Official)</label>
-            <input name="addressOfficial" value={formData.addressOfficial} onChange={handleChange} className="w-full p-2 border rounded" />
+            <input name="addressOfficial" value={formData.addressOfficial} onChange={handleChange} className="w-full p-2 border rounded" required/>
           </div>
           <div>
             <label className="block font-medium">Address (Personal)</label>
-            <input name="addressPersonal" value={formData.addressPersonal} onChange={handleChange} className="w-full p-2 border rounded" />
+            <input name="addressPersonal" value={formData.addressPersonal} onChange={handleChange} className="w-full p-2 border rounded" required/>
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block font-medium">Telephone (Official)</label>
-            <input name="phoneOfficial" value={formData.phoneOfficial} onChange={handleChange} className="w-full p-2 border rounded" />
+            <input name="phoneOfficial" value={formData.phoneOfficial} onChange={handleChange} className="w-full p-2 border rounded" required/>
           </div>
           <div>
             <label className="block font-medium">Telephone (Personal)</label>
             <input name="phonePersonal" value={formData.phonePersonal} onChange={handleChange} className="w-full p-2 border rounded" />
+            {errors.phonePersonal && <p className="text-red-500 text-sm">{errors.phonePersonal}</p>}
           </div>
         </div>
 
@@ -171,7 +239,7 @@ export default function BookingForm() {
                   value={type.toLowerCase()}
                   checked={formData.positionNature === type.toLowerCase()}
                   onChange={handleChange}
-                /> {type}
+                required/> {type}
               </label>
             ))}
           </div>
@@ -181,24 +249,24 @@ export default function BookingForm() {
           <div className="space-y-4">
             <div>
               <label className="block font-medium">Institution / Department</label>
-              <input name="institution" value={formData.institution} onChange={handleChange} className="w-full p-2 border rounded" />
+              <input name="institution" value={formData.institution} onChange={handleChange} className="w-full p-2 border rounded" required/>
             </div>
             <div>
               <label className="block font-medium">Position / Designation</label>
-              <input name="designation" value={formData.designation} onChange={handleChange} className="w-full p-2 border rounded" />
+              <input name="designation" value={formData.designation} onChange={handleChange} className="w-full p-2 border rounded" required/>
             </div>
             <div className="grid grid-cols-3 gap-4">
               <div>
                 <label className="block font-medium">Service</label>
-                <input name="service" value={formData.service} onChange={handleChange} className="w-full p-2 border rounded" />
+                <input name="service" value={formData.service} onChange={handleChange} className="w-full p-2 border rounded" required/>
               </div>
               <div>
                 <label className="block font-medium">Grade</label>
-                <input name="grade" value={formData.grade} onChange={handleChange} className="w-full p-2 border rounded" />
+                <input name="grade" value={formData.grade} onChange={handleChange} className="w-full p-2 border rounded" required/>
               </div>
               <div>
                 <label className="block font-medium">Salary Code</label>
-                <input name="salaryCode" value={formData.salaryCode} onChange={handleChange} className="w-full p-2 border rounded" />
+                <input name="salaryCode" value={formData.salaryCode} onChange={handleChange} className="w-full p-2 border rounded" required/>
               </div>
             </div>
           </div>
@@ -212,18 +280,18 @@ export default function BookingForm() {
                 accept="image/*,application/pdf"
                 onChange={(e) => handleFileChange(e, "retiredIdCard")}
                 className="w-full p-2 border rounded"
-                />
+                required/>
             </div>
             )}
 
         <div>
           <label className="block font-medium">Date of Appointment</label>
-          <input type="date" name="appointmentDate" value={formData.appointmentDate} onChange={handleChange} className="p-2 border rounded" />
+          <input type="date" name="appointmentDate" value={formData.appointmentDate} onChange={handleChange} className="p-2 border rounded" required/>
         </div>
 
         <div>
           <label className="block font-medium">Requested Circuit Bungalow</label>
-          <input name="requestedBungalow" value={formData.requestedBungalow} onChange={handleChange} className="w-full p-2 border rounded" />
+          <input name="requestedBungalow" value={formData.requestedBungalow} onChange={handleChange} className="w-full p-2 border rounded" required/>
         </div>
 
         <div>
@@ -237,7 +305,7 @@ export default function BookingForm() {
                   value={type.toLowerCase()}
                   checked={formData.requestedLeaveType === type.toLowerCase()}
                   onChange={handleChange}
-                /> {type}
+                required/> {type}
               </label>
             ))}
           </div>
@@ -247,14 +315,16 @@ export default function BookingForm() {
           <div>
             <label className="block font-medium">From</label>
             <input type="date" name="leaveFrom" value={formData.leaveFrom} onChange={handleChange} className="w-full p-2 border rounded" />
+            {errors.leaveFrom && <p className="text-red-500 text-sm">{errors.leaveFrom}</p>}
           </div>
           <div>
             <label className="block font-medium">To</label>
             <input type="date" name="leaveTo" value={formData.leaveTo} onChange={handleChange} className="w-full p-2 border rounded" />
+            {errors.leaveTo && <p className="text-red-500 text-sm">{errors.leaveTo}</p>}
           </div>
           <div>
             <label className="block font-medium">No. of Days</label>
-            <input name="leaveDays" value={formData.leaveDays} onChange={handleChange} className="w-full p-2 border rounded" />
+            <input name="leaveDays" value={formData.leaveDays} onChange={handleChange} className="w-full p-2 border rounded" required/>
           </div>
         </div>
 
@@ -279,7 +349,7 @@ export default function BookingForm() {
                         value={row[field]}
                         onChange={(e) => handleRowChange(index, field, e.target.value)}
                         className="w-full p-1 border rounded"
-                      />
+                      required/>
                     </td>
                   ))}
                 </tr>
@@ -294,11 +364,12 @@ export default function BookingForm() {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block font-medium">Applicant Signature</label>
-            <input type="file" multiple accept="image/*,application/pdf" onChange={(e) => handleFileChange(e, "applicantSignature")} className="w-full p-2 border rounded"/>
+            <input type="file" multiple accept="image/*,application/pdf" onChange={(e) => handleFileChange(e, "applicantSignature")} className="w-full p-2 border rounded" required/>
           </div>
           <div>
             <label className="block font-medium">Date</label>
             <input type="date" name="applicantDate" value={formData.applicantDate} onChange={handleChange} className="w-full p-2 border rounded" />
+            {errors.applicantDate && <p className="text-red-500 text-sm">{errors.applicantDate}</p>}
           </div>
         </div>
         <button type="submit" className="w-full bg-green-600 text-white py-2 rounded mt-8 cursor-pointer">Submit</button>
