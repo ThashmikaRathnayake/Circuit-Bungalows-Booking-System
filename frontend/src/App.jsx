@@ -8,6 +8,7 @@ import BookingPage from "./pages/BookingPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import BookingForm from "./pages/BookingForm";
+import BookingDetails from "./components/BookingDetails";
 
 const router = createBrowserRouter([
   {
@@ -44,7 +45,12 @@ const router = createBrowserRouter([
       {
         path: "/admin",
         element: <AdminDashboard/>
-      } ]
+      },
+      {
+        path: "/admin/booking/:id",   
+        element: <BookingDetails />
+      }
+    ]
   }
   
   
