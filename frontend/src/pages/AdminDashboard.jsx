@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const AdminDashboard = () => {
   const [requests, setRequests] = useState([]);
@@ -87,16 +88,14 @@ const AdminDashboard = () => {
               ) : (
                 requests.map((req) => (
                   <tr key={req._id}>
-                    <td className="px-6 py-4 text-gray-800">{req.userName}</td>
+                    <td className="px-6 py-4 text-gray-800">{req.fullName}</td>
                     <td className="px-6 py-4">
-                      <a
-                        href={req.formLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <Link
+                        to={`/admin/booking/${req._id}`}
                         className="text-blue-600 hover:underline"
                       >
                         View Form
-                      </a>
+                      </Link>
                     </td>
                     <td className="px-6 py-4 flex gap-3">
                       <button
