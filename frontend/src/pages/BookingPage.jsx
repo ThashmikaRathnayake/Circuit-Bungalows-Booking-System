@@ -211,7 +211,7 @@ export default function BookingPage() {
                   )}
                 </div>
                 <div className="flex gap-10">
-                  <button className="w-[200px] h-[50px] rounded-lg bg-gray-700 cursor-pointer mt-10 text-white hover:bg-gray-500 " onClick={()=>{navigate("/bookingForm")}}>Book this bungalow</button>
+                  <button className="w-[200px] h-[50px] rounded-lg bg-gray-700 cursor-pointer mt-10 text-white hover:bg-gray-500 " onClick={()=>{navigate("/bookingForm",{ state: { bungalow: data.name } })}}>Book this bungalow</button>
                   <button className="w-[200px] h-[50px] rounded-lg mt-10 bg-gray-700 text-white hover:bg-gray-500 cursor-pointer">Check Availability</button>
                 </div>
               </div>
