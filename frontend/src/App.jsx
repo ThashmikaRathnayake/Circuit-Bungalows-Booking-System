@@ -30,13 +30,14 @@ const router = createBrowserRouter([
     element: <ProtectedRoute allowedRoles={['user']} />,
     children: [
       {
-    path: "/infoPage",
-    element: <InfoPage />
-  },
-  {
-    path: "/booking/:circuit", 
-    element: <BookingPage />
-  } ]
+        path: "/infoPage",
+        element: <InfoPage />
+      },
+      {
+        path: "/booking/:circuit", 
+        element: <BookingPage />
+      } 
+    ]
   },
   
   {
