@@ -20,7 +20,7 @@ const bookingSchema = new mongoose.Schema({
     leaveTo: String,
     leaveDays: String,
     substitutes: [
-        { name: String, nic: String, designation: String, department: String }
+        { name: String, nic: String, relationship: String }
     ],
     retiredIdCard: [String],       // will store Supabase file URLs
     applicantSignature: [String],  // will store Supabase file URLs

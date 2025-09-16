@@ -2,16 +2,15 @@ import React from 'react'
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 
 const ProtectedRoute = ({ allowedRoles }) => {
-    
-  const isLoggedIn = "token" in localStorage; 
-  const userRole = localStorage.getItem("userRole")
+  const token = localStorage.getItem("token");
+  const userRole = localStorage.getItem("userRole");
   const location = useLocation();
 
-  if (!isLoggedIn) {
+  if (!token) {
     return <Navigate to="/" replace state={{ from: location }} />;
   }
 
-  if (allowedRoles && !allowedRoles.includes(userRole)) {
+  if (allowedRoles?.length && !allowedRoles.includes(userRole)) {
     return (
       <div className="flex items-center justify-center h-[80vh] bg-gray-50 px-4">
         <div className="bg-white rounded-lg shadow-md p-8 max-w-md text-center">
@@ -30,4 +29,4 @@ const ProtectedRoute = ({ allowedRoles }) => {
   return <Outlet />;
 };
 
-export default ProtectedRoute
+export default ProtectedRoute;
