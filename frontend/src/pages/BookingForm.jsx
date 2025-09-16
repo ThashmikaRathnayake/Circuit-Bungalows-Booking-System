@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import logoLeft from '../assets/surveylogo.png'
 import logoRight from '../assets/national-emblem-sri-lankan.png'
 import MediaUpload from "../Utils/MediaUpload";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
 
 const bungalowPrices = {
@@ -15,8 +15,8 @@ const bungalowPrices = {
   "diyathalawa HQ 41": { survey: 300, land: 500, other: 1200 },
   "diyathalawa HQ 38": { survey: 300, land: 500, other: 1200 },
   "diyathalawa HQ 45": { survey: 300, land: 500, other: 1200 },
-  "anuradapura CB": { survey: 500, land: 1000, other: 3500 },
-  "nuwara eliya CB": { survey: 500, land: 1000, other: 3500 },
+  "Anuradhapura": { survey: 500, land: 1000, other: 3500 },
+  "Nuwara Eliya": { survey: 500, land: 1000, other: 3500 },
   "jaffna CB": { survey: 300, land: 1000, other: null },
   "ampara CB": { survey: 300, land: 500, other: 1200 },
   "katharagama CB": { survey: 500, land: 1000, other: 1500 },
@@ -47,12 +47,29 @@ export default function BookingForm() {
     leaveFrom: "",
     leaveTo: "",
     leaveDays: "",
-    substitutes: [{ name: "", nic: "", designation: "", department: "" }],
+    substitutes: [{ name: "", nic: "", relationship: "" }],
     retiredIdCard: [],
     applicantSignature: [],
     applicantDate: "",
   });
   const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+  if (location.state?.bungalow) {
+      const bungalowKey = location.state.bungalow
+        .replace(/\s+/g, " ")   // normalize spaces if needed
+        .replace(/\bcb\b/i, "CB") // make CB uppercase if needed
+        .trim();
+      setFormData((prev) => ({
+        ...prev,
+        requestedBungalow: bungalowKey,
+      }));
+    }
+  }, [location.state]);
+
+
 
   const validateForm = () => {
   let newErrors = {};
@@ -91,10 +108,9 @@ export default function BookingForm() {
 
   // if object is empty -> valid
   return Object.keys(newErrors).length === 0;
-};
+ };
 
 
-  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -247,10 +263,32 @@ export default function BookingForm() {
 
         {formData.positionNature === "active" && (
           <div className="space-y-4">
-            <div>
-              <label className="block font-medium">Institution / Department</label>
-              <input name="institution" value={formData.institution} onChange={handleChange} className="w-full p-2 border rounded" required/>
-            </div>
+            <div className="flex gap-6">
+              <label className="block font-medium">Department:</label>
+            {["survey", "land", "other"].map((dept) => (
+              <label key={dept} className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="department"
+                  value={dept}
+                  checked={formData.department === dept}
+                  onChange={(e) =>
+                    setFormData({ ...formData, department: e.target.value })
+                  }
+                />
+                <span className="capitalize">{dept}</span>
+              </label>
+            ))}
+          </div>
+
+          {/* Display price only for selected department */}
+          {formData.department && (
+            <p className="mt-2 text-gray-700">
+              Price for <span className="font-semibold capitalize">{formData.department}</span>, Circuit Bungalow <span className="font-semibold capitalize">{ formData.requestedBungalow }</span> of Survey: 
+              Rs. {bungalowPrices[formData.requestedBungalow]?.[formData.department] ?? "N/A"}
+            </p>
+          )}
+
             <div>
               <label className="block font-medium">Position / Designation</label>
               <input name="designation" value={formData.designation} onChange={handleChange} className="w-full p-2 border rounded" required/>
@@ -273,6 +311,7 @@ export default function BookingForm() {
         )}
 
         {formData.positionNature === "retired" && (
+          <>
             <div className="mt-4">
                 <label className="block font-medium">Upload Retired ID Card</label>
                 <input
@@ -282,6 +321,32 @@ export default function BookingForm() {
                 className="w-full p-2 border rounded"
                 required/>
             </div>
+            
+            <div className="flex gap-6">
+              <label className="block font-medium">Department:</label>
+            {["survey", "land", "other"].map((dept) => (
+              <label key={dept} className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="department"
+                  value={dept}
+                  checked={formData.department === dept}
+                  onChange={(e) =>
+                    setFormData({ ...formData, department: e.target.value })
+                  }
+                />
+                <span className="capitalize">{dept}</span>
+              </label>
+            ))}
+          </div>
+          {/* Display price only for selected department */}
+          {formData.department && (
+            <p className="mt-2 text-gray-700">
+              Price for <span className="font-semibold capitalize">{formData.department}</span>, Circuit Bungalow <span className="font-semibold capitalize">{ formData.requestedBungalow }</span> of Survey: 
+              Rs. {bungalowPrices[formData.requestedBungalow]?.[formData.department] ?? "N/A"}
+            </p>
+          )}
+            </>
             )}
 
         <div>
@@ -290,9 +355,23 @@ export default function BookingForm() {
         </div>
 
         <div>
-          <label className="block font-medium">Requested Circuit Bungalow</label>
-          <input name="requestedBungalow" value={formData.requestedBungalow} onChange={handleChange} className="w-full p-2 border rounded" required/>
-        </div>
+        <label className="block font-medium">Requested Circuit Bungalow</label>
+        <select
+          name="requestedBungalow"
+          value={formData.requestedBungalow}
+          onChange={handleChange}
+          className="w-full p-2 border rounded"
+          required
+        >
+          <option value="">-- Select a Bungalow --</option>
+          {Object.keys(bungalowPrices).map((bungalow) => (
+            <option key={bungalow} value={bungalow}>
+              {bungalow}
+            </option>
+          ))}
+        </select>
+      </div>
+
 
         <div>
           <label className="block font-medium">Type of Leave Requested</label>
@@ -329,37 +408,40 @@ export default function BookingForm() {
         </div>
 
         <div>
-          <label className="block font-medium mb-2">Substitute Person Details</label>
+          <label className="block font-medium mb-2">Details of people styaing</label>
           <table className="w-full border border-collapse">
             <thead>
               <tr>
                 <th className="border p-2">Name</th>
-                <th className="border p-2">NIC/Employee No</th>
-                <th className="border p-2">Designation</th>
-                <th className="border p-2">Department</th>
+                <th className="border p-2">NIC</th>
+                <th className="border p-2">Relationship</th>
               </tr>
             </thead>
             <tbody>
               {formData.substitutes.map((row, index) => (
                 <tr key={index}>
-                  {['name', 'nic', 'designation', 'department'].map((field) => (
+                  {['name', 'nic', 'relationship'].map((field) => (
                     <td className="border p-2" key={field}>
                       <input
                         type="text"
                         value={row[field]}
                         onChange={(e) => handleRowChange(index, field, e.target.value)}
                         className="w-full p-1 border rounded"
-                      required/>
+                      />
                     </td>
                   ))}
                 </tr>
               ))}
             </tbody>
           </table>
-          <button type="button" onClick={addRow} className="mt-2 px-3 py-1 bg-blue-500 text-white rounded">
+          <button type="button" onClick={addRow} className="mt-2 px-3 py-1 bg-gray-500 hover:bg-gray-600 cursor-pointer text-white rounded">
             + Add Row
           </button>
         </div>
+
+        <p>
+          I hereby confirm that the above-mentioned details are correct and that I agree to the conditions stated in the <span className="text-blue-500 cursor-pointer" onClick={()=>{navigate("/infoPage")}}>rules</span>. I also undertake to ensure that only the permitted number of residents will be accommodated here. Furthermore, if any damage is caused to the property of this tourist bungalow by those residents, I agree to personally bear the responsibility of paying for such damages.
+        </p>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -372,7 +454,7 @@ export default function BookingForm() {
             {errors.applicantDate && <p className="text-red-500 text-sm">{errors.applicantDate}</p>}
           </div>
         </div>
-        <button type="submit" className="w-full bg-green-600 text-white py-2 rounded mt-8 cursor-pointer">Submit</button>
+        <button type="submit" className="w-full bg-gray-600 hover:bg-gray-700 text-white py-2 rounded mt-8 cursor-pointer">Submit</button>
       </form>
     </div>
      <Footer />
