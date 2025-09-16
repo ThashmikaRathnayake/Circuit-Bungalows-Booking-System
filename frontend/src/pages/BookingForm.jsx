@@ -269,11 +269,11 @@ export default function BookingForm() {
               <label key={dept} className="flex items-center gap-2">
                 <input
                   type="radio"
-                  name="department"
+                  name="institution"
                   value={dept}
-                  checked={formData.department === dept}
+                  checked={formData.institution === dept}
                   onChange={(e) =>
-                    setFormData({ ...formData, department: e.target.value })
+                    setFormData({ ...formData, institution: e.target.value })
                   }
                 />
                 <span className="capitalize">{dept}</span>
@@ -282,10 +282,10 @@ export default function BookingForm() {
           </div>
 
           {/* Display price only for selected department */}
-          {formData.department && (
+          {formData.institution && (
             <p className="mt-2 text-gray-700">
-              Price for <span className="font-semibold capitalize">{formData.department}</span>, Circuit Bungalow <span className="font-semibold capitalize">{ formData.requestedBungalow }</span> of Survey: 
-              Rs. {bungalowPrices[formData.requestedBungalow]?.[formData.department] ?? "N/A"}
+              Price for <span className="font-semibold capitalize">{formData.institution}</span>, Circuit Bungalow <span className="font-semibold capitalize">{ formData.requestedBungalow }</span> of Survey: 
+              Rs. {bungalowPrices[formData.requestedBungalow]?.[formData.institution] ?? "N/A"}
             </p>
           )}
 
@@ -328,11 +328,11 @@ export default function BookingForm() {
               <label key={dept} className="flex items-center gap-2">
                 <input
                   type="radio"
-                  name="department"
+                  name="institution"
                   value={dept}
-                  checked={formData.department === dept}
+                  checked={formData.institution === dept}
                   onChange={(e) =>
-                    setFormData({ ...formData, department: e.target.value })
+                    setFormData({ ...formData, institution: e.target.value })
                   }
                 />
                 <span className="capitalize">{dept}</span>
@@ -340,10 +340,10 @@ export default function BookingForm() {
             ))}
           </div>
           {/* Display price only for selected department */}
-          {formData.department && (
+          {formData.institution && (
             <p className="mt-2 text-gray-700">
-              Price for <span className="font-semibold capitalize">{formData.department}</span>, Circuit Bungalow <span className="font-semibold capitalize">{ formData.requestedBungalow }</span> of Survey: 
-              Rs. {bungalowPrices[formData.requestedBungalow]?.[formData.department] ?? "N/A"}
+              Price for <span className="font-semibold capitalize">{formData.institution}</span>, Circuit Bungalow <span className="font-semibold capitalize">{ formData.requestedBungalow }</span> of Survey: 
+              Rs. {bungalowPrices[formData.requestedBungalow]?.[formData.institution] ?? "N/A"}
             </p>
           )}
             </>
