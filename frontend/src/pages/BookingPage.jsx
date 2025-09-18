@@ -1,96 +1,44 @@
-import React from "react";
-import { Link, useParams } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useParams,useNavigate } from "react-router-dom";
 import GalleryCarousel from "../components/GalleryCarousel";
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { HashLink, } from "react-router-hash-link";
 import { IoLocationOutline } from "react-icons/io5";
 import { IoIosInformationCircleOutline } from "react-icons/io";
 import { FiPhone } from "react-icons/fi";
-import img1 from '../assets/locations/Diyathalawa.jpg';
-import img2 from '../assets/locations/Anuradhapura.jpg';
-import img3 from '../assets/locations/NuwaraEliya.jpg';
-import img4 from '../assets/locations/Jaffna.jpg';
-import img8 from '../assets/locations/Kuchchaveli.jpg';
-import img9 from '../assets/locations/Pasikudah.jpg';
-import img10 from '../assets/locations/Girithale.jpg';
-import { HashLink, } from "react-router-hash-link";
-import { useNavigate } from "react-router-dom";
 import { Accordion, AccordionItem } from "../components/Accordion";
-
-// Data for all circuits
-const circuitsData = {
-  "anuradhapura": {
-    name: "Anuradhapura",
-    images: [
-      img2,
-      img8,
-      img9
-    ],
-    description1: "Beachside bungalow retreat in Anuradhapura...",
-    description2: "Welcome to Anuradapura Circuit Bungalow. Our well-maintained property offers a peaceful retreat near Nilaveli Beach and Pigeon Island. The bungalow is situated in a serene environment with easy access to local attractions.",
-    survey_charges: "Rs.600",
-    land_charges: "Rs.1200",
-    other_charges: "Rs.5000",
-    cb_A_No: "1234567890",
-    cb_B_No: "4733845328",
-    sleeps: 5,
-    circuit_bungalow_description: "Our spacious and comfortable bungalows offer a perfect retreat with sea and garden views. Each bungalow is designed to provide a comfortable stay for families or small groups, with all the amenities you need for a relaxing vacation.",
-    bedRooms: 2,
-    Living_area: 1,
-    mini_kitchen: 1,
-    bathrooms: 2,
-    acAvailable: true,
-    cb_A_available: true,
-    cb_B_available: true,
-  },
-  "nuwaraeliya": {
-    name: "Nuwara Eliya",
-    images: [
-      img3,
-      img1,
-      img10
-    ],
-    description1: "Luxury resort with poolside view in Nuwara Eliya...",
-    description2: "Welcome to Anuradapura Circuit Bungalow. Our well-maintained property offers a peaceful retreat near Nilaveli Beach and Pigeon Island. The bungalow is situated in a serene environment with easy access to local attractions.",
-    survey_charges: "Rs.600",
-    land_charges: "Rs.1200",
-    other_charges: "Rs.5000",
-    sleeps: 5,
-    circuit_bungalow_description: "Our spacious and comfortable bungalows offer a perfect retreat with sea and garden views. Each bungalow is designed to provide a comfortable stay for families or small groups, with all the amenities you need for a relaxing vacation.",
-    bedRooms: 2,
-    Living_area: 1,
-    mini_kitchen: 1,
-    bathrooms: 2,
-    acAvailable: true,
-    cb_No: "9876543210",
-    cb_available: false,
-  },
-  "diyathalawa-cb": {
-    name: "Diyathalawa CB",
-    images: [
-      img1,
-      img4,
-      img10
-    ],
-    description: "Luxury resort with poolside view in Diyathalawa..."
-  },
-  "diyathalawa-hq": {
-    name: "Diyathalawa HQ",
-    images: [
-      img1,
-      img4,
-      img10
-    ],
-    description: "Luxury resort with poolside view in Diyathalawa..."
-  },
-  // add the rest of the 12 circuits here
-};
+import axios from "axios";
 
 export default function BookingPage() {
-  const { circuit } = useParams(); // get circuit from URL
-  const data = circuitsData[circuit.toLowerCase()]; // lookup data
-
+  const { circuit } = useParams(); 
   const navigate = useNavigate();
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true); 
+
+  useEffect(() => {
+    const fetchBungalow = async () => {
+      try {
+        // Call your backend to get bungalow by name (or slug)
+        const res = await axios.get(`http://localhost:3000/locationUpdate/getAll`);
+        // Find the bungalow that matches the URL param (circuit)
+        const bungalow = res.data.find(
+          (b) => b.name.toLowerCase().replace(/\s/g, '') === circuit.toLowerCase().replace(/\s/g, '')
+        );
+        setData(bungalow);
+      } catch (err) {
+        console.error("Error fetching bungalow:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBungalow();
+  }, [circuit]);
+
+  if (loading) {
+    return <div className="text-center mt-16">Loading...</div>;
+  }
 
   if (!data) {
     return (
