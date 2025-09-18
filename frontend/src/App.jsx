@@ -9,6 +9,9 @@ import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import BookingForm from "./pages/BookingForm";
 import BookingDetails from "./components/BookingDetails";
+import AdminAddLocation from "./pages/AdminAddLocation";
+import AdminEditLocation from "./pages/AdminEditLocation";
+import AdminBungalowTable from "./pages/BungalowTable";
 
 const RootRedirect = () => {
   const token = localStorage.getItem("token");
@@ -45,8 +48,7 @@ const router = createBrowserRouter([
     { path: "/infoPage", element: <InfoPage /> },
     { path: "/booking/:circuit", element: <BookingPage /> }
   ]
-}
-,
+  },
   
   {
     element: <ProtectedRoute allowedRoles={['admin']} />,
@@ -58,7 +60,21 @@ const router = createBrowserRouter([
       {
         path: "/admin/booking/:id",   
         element: <BookingDetails />
-      }
+      },
+      {
+        path: "/admin/addLocation",
+        element: <AdminAddLocation />,
+      },
+
+      {
+        path: "/admin/editLocation",
+        element: <AdminEditLocation />,
+      },
+
+      {
+        path: "/admin/bungalowTable",
+        element: <AdminBungalowTable />,
+      },
     ]
   }
   
