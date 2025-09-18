@@ -9,6 +9,8 @@ export default function AdminBungalowTable() {
   const [bungalow, setBungalow] = useState([]);
   const navigate = useNavigate();
   const [a, setA] = useState("")
+  const [selectedBungalow, setSelectedBungalow] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
 
   // Fetch all bungalows from backend
@@ -41,6 +43,18 @@ export default function AdminBungalowTable() {
     }
   };
 
+  // Open Modal
+  const handleView = (bungalow) => {
+    setSelectedBungalow(bungalow);
+    setIsModalOpen(true);
+  };
+
+  // Close Modal
+  const handleClose = () => {
+    setSelectedBungalow(null);
+    setIsModalOpen(false);
+  };
+
   return (
     <>
     <Navbar/>
@@ -68,7 +82,7 @@ export default function AdminBungalowTable() {
               <td className="p-2 border">{b.sleeps}</td>
               <td className="p-2 flex justify-center gap-2 ">
                 <button
-                  onClick={() => navigate(`/bungalow/view/${b._id}`)}
+                  onClick={() => handleView(b)}
                   className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded cursor-pointer"
                 >
                   View
@@ -90,6 +104,80 @@ export default function AdminBungalowTable() {
           ))}
         </tbody>
       </table>
+      {/* Modal */}
+      {isModalOpen && selectedBungalow && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white rounded-2xl shadow-2xl w-11/12 max-w-5xl relative overflow-y-auto max-h-[90vh] p-8">
+            
+            {/* Close */}
+            <button
+              onClick={handleClose}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl"
+            >
+              ✖
+            </button>
+
+            {/* Title */}
+            <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">
+              {selectedBungalow.name}
+            </h2>
+
+            {/* Details */}
+            <section className="mb-6">
+              <h3 className="text-lg font-semibold text-gray-700 mb-3">Overview</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-gray-700">
+                <p><strong>Bedrooms:</strong> {selectedBungalow.bedRooms}</p>
+                <p><strong>Living Areas:</strong> {selectedBungalow.Living_area}</p>
+                <p><strong>Bathrooms:</strong> {selectedBungalow.bathrooms}</p>
+                <p><strong>Sleeps:</strong> {selectedBungalow.sleeps}</p>
+              </div>
+            </section>
+
+            {/* Amenities */}
+            <section className="mb-6">
+              <h3 className="text-lg font-semibold text-gray-700 mb-3">Amenities</h3>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                <span className={`px-3 py-1 rounded-full text-sm text-center ${selectedBungalow.acAvailable ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
+                  AC {selectedBungalow.acAvailable ? "✔" : "✖"}
+                </span>
+                <span className={`px-3 py-1 rounded-full text-sm text-center ${selectedBungalow.tvAvailable ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
+                  TV {selectedBungalow.tvAvailable ? "✔" : "✖"}
+                </span>
+                <span className={`px-3 py-1 rounded-full text-sm text-center ${selectedBungalow.hotWaterAvailable ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
+                  Hot Water {selectedBungalow.hotWaterAvailable ? "✔" : "✖"}
+                </span>
+              </div>
+            </section>
+
+            {/* Descriptions */}
+            <section className="mb-6">
+              <h3 className="text-lg font-semibold text-gray-700 mb-3">Description</h3>
+              <div className="space-y-3 text-gray-600 leading-relaxed">
+                <p>{selectedBungalow.description1}</p>
+                <p>{selectedBungalow.description2}</p>
+              </div>
+            </section>
+
+            {/* Images */}
+            {selectedBungalow.images?.length > 0 && (
+              <section>
+                <h3 className="text-lg font-semibold text-gray-700 mb-3">Images</h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                  {selectedBungalow.images.map((img, i) => (
+                    <img
+                      key={i}
+                      src={img}
+                      alt={`bungalow-${i}`}
+                      className="w-full h-40 object-cover rounded-lg shadow"
+                    />
+                  ))}
+                </div>
+              </section>
+            )}
+          </div>
+        </div>
+      )}
+
     </div>
     <Footer/>
     </>
