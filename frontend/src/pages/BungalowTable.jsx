@@ -60,7 +60,7 @@ export default function AdminBungalowTable() {
     <Navbar/>
     <div className="p-6 bg-white shadow-md rounded-lg relative">
       <h1 className="text-2xl font-bold mb-4">Bungalows</h1>
-      <button className="absolute right-3 top-4 p-2 bg-green-500 text-white rounded-xl hover:bg-green-600 cursor-pointer" onClick={()=>{navigate("/admin/addLocation")}}>+ Add Bungalow</button>
+      <button className="absolute right-3 top-4 p-2 bg-gray-500 text-white rounded-xl hover:bg-gray-600 cursor-pointer" onClick={()=>{navigate("/admin/addLocation")}}>+ Add Bungalow</button>
       <table className="min-w-full border">
         <thead>
           <tr className="bg-gray-100">

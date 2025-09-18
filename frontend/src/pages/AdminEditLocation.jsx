@@ -5,6 +5,8 @@ import toast from "react-hot-toast";
 import { useNavigate,useLocation  } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import logoLeft from '../assets/surveylogo.png'
+import logoRight from '../assets/national-emblem-sri-lankan.png'
 
 export default function AdminEditLocation({ bungalow }) {
   const location = useLocation()
@@ -109,8 +111,22 @@ export default function AdminEditLocation({ bungalow }) {
   return (
     <>
     <Navbar/>
-    <form onSubmit={handleSubmit} className="p-6 bg-white shadow-md rounded-lg">
-      <h1 className="text-2xl font-bold mb-4">Edit Bungalow</h1>
+    <form onSubmit={handleSubmit} className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg my-10">
+      <div className="flex items-center justify-between mb-6 border-b pb-4">
+            
+          <img src={logoLeft} alt="Survey Dept Logo" className="h-16 w-16 object-contain" />
+            
+            <div className="text-center flex-1">
+              <h1 className="text-xl font-bold uppercase">
+                  Survey Department of Sri Lanka
+              </h1>
+              <h2 className="text-lg font-semibold mt-1 underline">
+                   Edit Circuit Bungalow Details of {formData.name}
+              </h2>
+            </div>
+            
+              <img src={logoRight} alt="Govt Logo" className="h-16 w-16 object-contain" />
+        </div>
 
       {/* General Info */}
       <label className="block mb-1" htmlFor="name">Bungalow Name</label>
@@ -149,7 +165,7 @@ export default function AdminEditLocation({ bungalow }) {
           onChange={(e) => setNewFiles([...newFiles, ...e.target.files])}
           className="border p-2 rounded-lg"
         />
-        <button type="button" onClick={handleUpload} className="ml-2 bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 cursor-pointer">
+        <button type="button" onClick={handleUpload} className="ml-2 bg-gray-600 text-white px-3 py-1 rounded hover:bg-gray-700 cursor-pointer">
           Upload
         </button>
 
@@ -238,7 +254,7 @@ export default function AdminEditLocation({ bungalow }) {
       <label className="block mb-1" htmlFor="cb_No">General Contact Number</label>
       <input type="text" name="cb_No" placeholder="General Contact Number" value={formData.cb_No} onChange={handleChange} className="border p-2 w-full mb-2 rounded-lg" />
 
-      <button type="submit" className="w-full bg-green-600 text-white py-2 mt-4 rounded hover:bg-green-700 cursor-pointer">
+      <button type="submit" className="w-full bg-gray-600 text-white py-2 mt-4 rounded hover:bg-gray-700 cursor-pointer">
         Save Changes
       </button>
     </form>
