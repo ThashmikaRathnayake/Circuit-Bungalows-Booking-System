@@ -31,6 +31,7 @@ export default function AdminEditLocation({ bungalow }) {
 
 
   const [newFiles, setNewFiles] = useState([]); // store newly selected files
+  const [removedImages, setRemovedImages] = useState([]);
   const navigate = useNavigate();
   
 
@@ -80,6 +81,7 @@ export default function AdminEditLocation({ bungalow }) {
     const payload = {
       ...formData,
       images: allImages,
+      removedImages, 
     };
 
     console.log("Final form payload:", payload);
@@ -96,7 +98,7 @@ export default function AdminEditLocation({ bungalow }) {
     await axios.put(`http://localhost:3000/locationUpdate/${bungalowId}`, payload);
 
     toast.success("Bungalow updated successfully!");
-    navigate("/"); // redirect back to list
+    navigate("/admin/BungalowTable"); // redirect back to list
   } catch (err) {
     console.error("Error updating bungalow:", err);
     toast.error("Error updating bungalow. Please try again.");
@@ -111,51 +113,90 @@ export default function AdminEditLocation({ bungalow }) {
       <h1 className="text-2xl font-bold mb-4">Edit Bungalow</h1>
 
       {/* General Info */}
+      <label className="block mb-1" htmlFor="name">Bungalow Name</label>
       <input
         type="text"
         name="name"
         placeholder="Bungalow Name"
         value={formData.name}
         onChange={handleChange}
-        className="w-full border p-2 mb-3"
+        className="w-full border p-2 mb-3 rounded-lg"
       />
 
+      <label className="block mb-1" htmlFor="description1">Short Description</label>
       <textarea
         name="description1"
         placeholder="Short Description"
         value={formData.description1}
         onChange={handleChange}
-        className="w-full border p-2 mb-3"
+        className="w-full border p-2 mb-3 rounded-lg"
       />
 
+      <label className="block mb-1" htmlFor="description2">Detailed Description</label>
       <textarea
         name="description2"
         placeholder="Detailed Description"
         value={formData.description2}
         onChange={handleChange}
-        className="w-full border p-2 mb-3"
+        className="w-full border p-2 mb-3 rounded-lg"
       />
 
       {/* Image Upload */}
-      <div className="mb-3">
-        <input type="file" multiple onChange={(e) => setNewFiles([...e.target.files])} className="border p-2"/>
+      <label className="block mb-1" htmlFor="file">Bungalow Images</label>
+      <input
+          type="file"
+          multiple
+          onChange={(e) => setNewFiles([...newFiles, ...e.target.files])}
+          className="border p-2 rounded-lg"
+        />
         <button type="button" onClick={handleUpload} className="ml-2 bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 cursor-pointer">
           Upload
         </button>
-      </div>
+
 
       <div className="flex gap-2 mb-3">
-        {formData.images.map((img, i) => (
-          <img key={i} src={img} alt="preview" className="w-24 h-24 object-cover rounded" />
+        {(formData.images || []).map((img, i) => (
+          <div key={i} className="relative">
+            <img src={img} alt="preview" className="w-24 h-24 object-cover rounded mt-1" />
+            <button
+              type="button"
+              className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer hover:bg-red-600"
+              onClick={() => {
+                setFormData(prev => ({
+                  ...prev,
+                  images: prev.images.filter((_, index) => index !== i)
+                }));
+                setRemovedImages(prev => [...prev, img]); // optional
+              }}
+            >
+              ×
+            </button>
+          </div>
         ))}
       </div>
 
+
       {/* Features */}
       <div className="grid grid-cols-2 gap-4">
-        <input type="number" name="bedRooms" placeholder="Bedrooms" value={formData.bedRooms} onChange={handleChange} className="border p-2" />
-        <input type="number" name="Living_area" placeholder="Living Areas" value={formData.Living_area} onChange={handleChange} className="border p-2" />
-        <input type="number" name="bathrooms" placeholder="Bathrooms" value={formData.bathrooms} onChange={handleChange} className="border p-2" />
-        <input type="number" name="sleeps" placeholder="Sleeps" value={formData.sleeps} onChange={handleChange} className="border p-2" />
+        <div className="flex flex-col">
+        <label className="block  mb-1" htmlFor="bedRooms">Bedrooms</label>
+        <input type="number" name="bedRooms" placeholder="Bedrooms" value={formData.bedRooms} onChange={handleChange} className="border p-2 rounded-lg" required/>
+        </div>
+
+        <div className="flex flex-col">
+        <label className="block mb-1" htmlFor="Living_area">Living Areas</label>
+        <input type="number" name="Living_area" placeholder="Living Areas" value={formData.Living_area} onChange={handleChange} className="border p-2 rounded-lg" required/>
+        </div>
+
+        <div className="flex flex-col">
+        <label className="block  mb-1" htmlFor="bathrooms">Bathrooms</label>
+        <input type="number" name="bathrooms" placeholder="Bathrooms" value={formData.bathrooms} onChange={handleChange} className="border p-2 rounded-lg" required/>
+        </div>
+
+        <div className="flex flex-col">
+        <label className="block mb-1" htmlFor="sleeps">Sleeps</label>
+        <input type="number" name="sleeps" placeholder="Sleeps" value={formData.sleeps} onChange={handleChange} className="border p-2 rounded-lg" required/>
+        </div>
       </div>
 
       {/* Amenities */}
@@ -165,25 +206,37 @@ export default function AdminEditLocation({ bungalow }) {
       </label>
       <label className="block mt-4">
         <input type="checkbox" name="tvAvailable" checked={formData.tvAvailable} onChange={handleChange} />
-        <span className="ml-2">TV Available</span>
+        <span className="ml-2 ">TV Available</span>
       </label>
       <label className="block mt-4">
         <input type="checkbox" name="hotWaterAvailable" checked={formData.hotWaterAvailable} onChange={handleChange} />
         <span className="ml-2">Hot water Available</span>
       </label>
-      <input type="number" name="mini_kitchen" placeholder="Mini Kitchens" value={formData.mini_kitchen} onChange={handleChange} className="border p-2 w-full mt-2" />
+
+      <label className="block mt-2" htmlFor="mini_kitchen">Mini Kitchens</label>
+      <input type="number" name="mini_kitchen" placeholder="Mini Kitchens" value={formData.mini_kitchen} onChange={handleChange} className="border p-2 w-full mt-2 rounded-lg" required/>
 
       {/* Charges */}
-      <h2 className="font-semibold mt-4">Charges</h2>
-      <input type="text" name="survey_charges" placeholder="Survey Charges" value={formData.survey_charges} onChange={handleChange} className="border p-2 w-full mb-2" />
-      <input type="text" name="land_charges" placeholder="Land Charges" value={formData.land_charges} onChange={handleChange} className="border p-2 w-full mb-2" />
-      <input type="text" name="other_charges" placeholder="Other Charges" value={formData.other_charges} onChange={handleChange} className="border p-2 w-full mb-2" />
+      <div className="font-semibold mt-4">Charges</div>
+      <label className="block mb-1" htmlFor="survey_charges">Survey Charges</label>
+      <input type="text" name="survey_charges" placeholder="Survey Charges" value={formData.survey_charges} onChange={handleChange} className="border p-2 w-full mb-2 rounded-lg" required/>
+
+      <label className="block mb-1" htmlFor="land_charges">Land Charges</label>
+      <input type="text" name="land_charges" placeholder="Land Charges" value={formData.land_charges} onChange={handleChange} className="border p-2 w-full mb-2 rounded-lg" required/>
+
+      <label className="block mb-1" htmlFor="other_charges">Other Charges</label>
+      <input type="text" name="other_charges" placeholder="Other Charges" value={formData.other_charges} onChange={handleChange} className="border p-2 w-full mb-2 rounded-lg" required/>
 
       {/* Contact */}
       <h2 className="font-semibold mt-4">Contact Numbers</h2>
-      <input type="text" name="cb_A_No" placeholder="CB-A Number" value={formData.cb_A_No} onChange={handleChange} className="border p-2 w-full mb-2" />
-      <input type="text" name="cb_B_No" placeholder="CB-B Number" value={formData.cb_B_No} onChange={handleChange} className="border p-2 w-full mb-2" />
-      <input type="text" name="cb_No" placeholder="General Contact Number" value={formData.cb_No} onChange={handleChange} className="border p-2 w-full mb-2" />
+      <label className="block mb-1" htmlFor="cb_A_No">CB-A Number</label>
+      <input type="text" name="cb_A_No" placeholder="CB-A Number" value={formData.cb_A_No} onChange={handleChange} className="border p-2 w-full mb-2 rounded-lg" />
+
+      <label className="block mb-1" htmlFor="cb_B_No">CB-B Number</label>
+      <input type="text" name="cb_B_No" placeholder="CB-B Number" value={formData.cb_B_No} onChange={handleChange} className="border p-2 w-full mb-2 rounded-lg" />
+
+      <label className="block mb-1" htmlFor="cb_No">General Contact Number</label>
+      <input type="text" name="cb_No" placeholder="General Contact Number" value={formData.cb_No} onChange={handleChange} className="border p-2 w-full mb-2 rounded-lg" />
 
       <button type="submit" className="w-full bg-green-600 text-white py-2 mt-4 rounded hover:bg-green-700 cursor-pointer">
         Save Changes
