@@ -3,6 +3,8 @@ import mongoose from "mongoose";
 const bookingSchema = new mongoose.Schema({
     fullName: String,
     nic: String,
+    email: { type: String, required: true },  
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     addressOfficial: String,
     addressPersonal: String,
     phoneOfficial: String,
@@ -25,6 +27,36 @@ const bookingSchema = new mongoose.Schema({
     retiredIdCard: [String],       // will store Supabase file URLs
     applicantSignature: [String],  // will store Supabase file URLs
     applicantDate: String,
+
+    status: {
+        type: String,
+        enum: [
+        "pending",
+        "supervisor-approved",
+        "supervisor-rejected",
+        "sdag-approved",
+        "sdag-rejected",
+        "confirmed"
+        ],
+        default: "pending"
+    },
+    
+    approvals: {
+        supervisor: {
+        name: String,
+        position: String,
+        signatureUrl: String,
+        date: Date,
+        decision: String
+        },
+        sdag: {
+        name: String,
+        position: String,
+        signatureUrl: String,
+        date: Date,
+        decision: String
+        }
+    }
 });
 
 const BookingFormModel = mongoose.model("bookingForm", bookingSchema)

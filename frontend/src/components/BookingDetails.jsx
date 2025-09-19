@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import axios from "axios";
+import MediaUpload from "../Utils/MediaUpload";
 
 const BookingDetails = () => {
     const { id } = useParams();
@@ -17,6 +18,8 @@ const BookingDetails = () => {
     const [signatureFile, setSignatureFile] = useState(null);
     const [rejectReason, setRejectReason] = useState("");
 
+    const [errorMessage, setErrorMessage] = useState("");
+
     useEffect(() => {
         const fetchBooking = async () => {
             try {
@@ -27,44 +30,73 @@ const BookingDetails = () => {
                 setBooking(res.data.singleBookinginfo);
             } catch (err) {
                 console.error(err);
+                setErrorMessage("Failed to load booking details. Please try again.");
             }
         };
         fetchBooking();
     }, [id]);
 
+    useEffect(() => {
+        if (errorMessage) {
+            const timer = setTimeout(() => {
+                setErrorMessage("");
+            }, 1000);
+
+            return () => clearTimeout(timer); 
+        }
+    }, [errorMessage]);
+
+
+    // Handle Supervisor Approval
     const handleApproveSubmit = async () => {
         try {
             const token = localStorage.getItem("token");
+            let signatureUrl = "";
             const formData = new FormData();
             formData.append("approverName", approverName);
             formData.append("approverPosition", approverPosition);
-            if (signatureFile) formData.append("signature", signatureFile);
+            if (signatureFile) signatureUrl = await MediaUpload(signatureFile);
 
-            await axios.post(`http://localhost:3000/admin/approve/${id}`, formData, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+            await axios.post(`http://localhost:3000/admin/supervisor/approve/${id}`, 
+                {
+                    approverName,
+                    approverPosition,
+                    signatureUrl
+                },
+                {
+                    headers: { Authorization: `Bearer ${token}` }
+                }
+
+            );
 
             setShowApprovePopup(false);
             navigate("/admin"); // back to dashboard
         } catch (err) {
             console.error(err);
+            setErrorMessage("Approval failed. Please check the inputs and try again.");
         }
     };
-
+    
+    // Handle Supervisor Rejection
     const handleRejectSubmit = async () => {
         try {
             const token = localStorage.getItem("token");
             await axios.post(
-                `http://localhost:3000/admin/reject/${id}`,
-                { reason: rejectReason },
-                { headers: { Authorization: `Bearer ${token}` } }
+                `http://localhost:3000/admin/supervisor/reject/${id}`,
+                { 
+                    reason: rejectReason,
+                 },
+                { 
+                    headers: { Authorization: `Bearer ${token}` } 
+                }
             );
             setShowProcessPopup(false);
             navigate("/admin");
         } catch (err) {
             console.error(err);
+            setErrorMessage("Rejection failed. Please try again.");
         }
-    };
+    };            
 
     if (!booking) {
         return (
@@ -74,10 +106,19 @@ const BookingDetails = () => {
         );
     }
 
+    const ErrorAlert = ({ message }) =>
+    message ? (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-center">
+            {message}
+        </div>
+    ) : null;
+
+
     return (
         <div className="flex flex-col min-h-screen bg-gray-100">
             <Navbar />
             <main className="flex-1 p-6 md:p-12">
+                <ErrorAlert message={errorMessage} />
                 <div className="max-w-5xl mx-auto bg-white shadow-xl rounded-xl overflow-hidden">
                     <header className="bg-blue-800 text-white p-6 text-center">
                         <h1 className="text-2xl md:text-3xl font-bold">Official Booking Form</h1>
@@ -89,6 +130,7 @@ const BookingDetails = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <Field label="Full Name" value={booking.fullName} />
                                 <Field label="NIC" value={booking.nic} />
+                                <Field label="Email" value={booking.email} />
                                 <Field label="Official Address" value={booking.addressOfficial} />
                                 <Field label="Personal Address" value={booking.addressPersonal} />
                                 <Field label="Phone (Official)" value={booking.phoneOfficial} />
@@ -165,7 +207,11 @@ const BookingDetails = () => {
                         <div className="text-center">
                             <button
                                 onClick={() => setShowProcessPopup(true)}
-                                className="bg-green-700 hover:bg-green-800 text-white px-6 py-3 rounded-md text-lg font-semibold"
+                                className={`px-6 py-3 rounded-md text-lg font-semibold 
+                                            ${booking.status !== "pending"  
+                                                ? "bg-gray-400 cursor-not-allowed" 
+                                                : "bg-green-700 hover:bg-green-800 text-white"}`}
+                                disabled={booking.status !== "pending"}
                             >
                                 Review For Approval
                             </button>
@@ -178,6 +224,7 @@ const BookingDetails = () => {
             {showProcessPopup && (
                 <Popup onClose={() => setShowProcessPopup(false)}>
                     <div className="space-y-6">
+                        <ErrorAlert message={errorMessage} />
                         {/* Description */}
                         <p className="mb-6 text-gray-700">
                             It is certified that the above officer, attached to the{" "}
@@ -244,6 +291,7 @@ const BookingDetails = () => {
             {showApprovePopup && (
                 <Popup onClose={() => setShowApprovePopup(false)}>
                     <div className="space-y-6">
+                        <ErrorAlert message={errorMessage} />
                         <h3 className="text-xl font-bold text-gray-800 mb-2 text-center">
                             Approval Details
                         </h3>
