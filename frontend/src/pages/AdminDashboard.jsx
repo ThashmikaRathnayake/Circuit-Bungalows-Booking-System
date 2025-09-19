@@ -6,18 +6,22 @@ import { useNavigate } from "react-router-dom";
 
 const AdminDashboard = () => {
   const [requests, setRequests] = useState([]);
-
+  const [userRole, setUserRole] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchRequests();
+    const role = localStorage.getItem("userRole");
+    console.log("User role from localStorage:", role);
+    setUserRole(role);
+    fetchRequests(role);
   }, []);
 
-  const fetchRequests = async () => {
+  const fetchRequests = async ( role ) => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.get("http://localhost:3000/admin/requests", {
         headers: { Authorization: `Bearer ${token}` },
+        params: { role } 
       });
       console.log(res.data);
       setRequests(res.data.bookings || []);
@@ -28,9 +32,9 @@ const AdminDashboard = () => {
 
   const statusClasses = {
     "supervisor-approved": "bg-green-100 text-green-700",
-    "sdag-approved": "bg-green-100 text-green-700",
+    "sdag-approved": "bg-green-300 text-green-700",
     "supervisor-rejected": "bg-red-100 text-red-700",
-    "sdag-rejected": "bg-red-100 text-red-700",
+    "sdag-rejected": "bg-red-300 text-red-700",
     "confirmed": "bg-gray-100 text-gray-700",
     "pending": "bg-yellow-100 text-yellow-700",
   };
@@ -42,7 +46,9 @@ const AdminDashboard = () => {
       {/* Main Content */}
       <main className="flex-1 p-8 bg-gray-100">
         <h2 className="text-3xl font-bold text-gray-800 mb-6">
-          Booking Requests
+          Booking Requests (
+          {userRole === "supervisor" ? "Supervisor" : userRole === "sdag" ? "SDAG" : "User"}
+          )
         </h2>
 
         <div className="overflow-x-auto bg-white rounded-lg shadow-md border border-gray-200">
@@ -72,7 +78,7 @@ const AdminDashboard = () => {
                     <td className="px-6 py-4 text-gray-800 border">{req.applicantDate}</td>
                     <td className="px-6 py-3 border capitalize">
                       <span
-                        className={`px-3 py-1 rounded text-sm font-medium ${statusClasses[req.status] || statusClasses["pending"]
+                        className={`inline-block w-40 text-center px-3 py-1 rounded text-sm font-medium ${statusClasses[req.status] || statusClasses["pending"]
                           }`}
                       >
                         {req.status || "Pending"}

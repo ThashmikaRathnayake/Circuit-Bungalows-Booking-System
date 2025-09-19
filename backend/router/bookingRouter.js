@@ -14,7 +14,9 @@ import { protect } from "../middleware/authMiddleware.js";
 const bookingRouter = express.Router();
 
 bookingRouter.post("/",protect,createBooking)
-bookingRouter.get("/requests", getBookings);        
+
+bookingRouter.get("/requests", protect, getBookings);
+      
 bookingRouter.get("/:id", getBookingById); 
 
 bookingRouter.post("/supervisor/approve/:id", protect, supervisorApprove);

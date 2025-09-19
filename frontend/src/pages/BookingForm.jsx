@@ -33,6 +33,7 @@ export default function BookingForm() {
     nic: "",
     addressOfficial: "",
     addressPersonal: "",
+    email: "",
     phoneOfficial: "",
     phonePersonal: "",
     positionNature: "", // active or retired
@@ -172,7 +173,11 @@ export default function BookingForm() {
       console.log("Final form payload:", payload);
 
       // save to MongoDB
-       axios.post("http://localhost:3000/admin", payload)
+      axios.post("http://localhost:3000/admin", payload, {
+  headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+})
+
+
       .then((res) => {
         console.log("Form submitted successfully:", res.data);
         toast.success("Booking request submitted successfully!");

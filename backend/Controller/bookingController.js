@@ -67,15 +67,28 @@ export const createBooking = async (req, res) => {
 };
 
 
-export async function getBookings(req, res){
-    try{
-        const bookings = await BookingFormModel.find();
-        res.json({ success: true, bookings });
-    }catch (error) {
+export async function getBookings(req, res) {
+  try {
+    let filter = {};
+
+    if (req.user.role === "supervisor") {
+      // Supervisor sees all bookings
+      filter = {}; 
+    } else if (req.user.role === "sdag") {
+      // SDAG sees only bookings approved by supervisor
+      filter.status = { $in: ["supervisor-approved", "sdag-approved", "sdag-rejected"] };
+    } else {
+      return res.status(403).json({ success: false, error: "Not authorized" });
+    }
+
+    const bookings = await BookingFormModel.find(filter).sort({ createdAt: -1 });
+    res.json({ success: true, bookings });
+  } catch (error) {
     console.error("Error fetching bookings:", error);
     res.status(500).json({ success: false, error: "Server error" });
   }
 }
+
 
 // find a single booking details
 export async function getBookingById(req,res){
@@ -117,11 +130,12 @@ export async function supervisorApprove(req, res) {
 
     // Send email to applicant
     await sendEmail(
-      booking.email,
-      "Supervisor Approval - Circuit Bungalow Booking",
-      `<p>Dear ${booking.fullName},</p>
-       <p>Your booking request for <b>${booking.requestedBungalow}</b> has been <b>approved by Supervisor</b>.</p>
-       <p>Next step: SDAG approval.</p>`
+      "sdag@example.com", // Replace with real SDAG email or get dynamically
+      "New Booking Approval Required",
+      `<p>Dear SDAG,</p>
+       <p>A new booking request for <b>${booking.requestedBungalow}</b> by ${booking.fullName} requires your approval.</p>
+       <p>Please review it.</p>`
+       
     );
 
     
@@ -162,7 +176,9 @@ export async function supervisorReject(req, res) {
       booking.email,
       "Booking Rejected - Supervisor",
       `<p>Dear ${booking.fullName},</p>
-      <p>Unfortunately, your booking request for <b>${booking.requestedBungalow}</b> has been <b>rejected by Supervisor</b>.</p>`
+      <p>Unfortunately, your booking request for <b>${booking.requestedBungalow}</b> has been <b>rejected by Supervisor</b>.</p>
+      <p>Reason: ${reason}</p>`
+      
     );
 
     res.json({ success: true, message: "Booking rejected by supervisor", booking });
@@ -200,9 +216,12 @@ export async function sdagApprove(req, res) {
     await sendEmail(
       booking.email,
       "SDAG Approval - Circuit Bungalow Booking",
-      `<p>Dear ${booking.fullName},</p>
-      <p>Your booking request for <b>${booking.requestedBungalow}</b> has been <b>approved by SDAG</b>.</p>
-      <p>Please proceed with payment to confirm your booking.</p>`
+      `<p>Mr./Ms. ${booking.fullName},</p>
+      As per your request made on ${booking.applicantDate}, I hereby approve the reservation of the Circuit Bungalow / Holiday Resort ${booking.requestedBungalow} 
+      from ${booking.startDate} day at 10.00 a.m. until ${booking.endDate} day at 9.00 a.m.`
+      
+
+
     );
 
     res.json({ success: true, message: "Booking approved by SDAG", booking });

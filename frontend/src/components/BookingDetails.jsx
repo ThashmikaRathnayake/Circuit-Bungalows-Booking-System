@@ -8,10 +8,13 @@ import MediaUpload from "../Utils/MediaUpload";
 const BookingDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const [userRole, setUserRole] = useState("");
+
     const [booking, setBooking] = useState(null);
 
     const [showProcessPopup, setShowProcessPopup] = useState(false);
     const [showApprovePopup, setShowApprovePopup] = useState(false);
+    const [showSdagPopup, setShowSdagPopup] = useState(false);
 
     const [approverName, setApproverName] = useState("");
     const [approverPosition, setApproverPosition] = useState("");
@@ -19,6 +22,17 @@ const BookingDetails = () => {
     const [rejectReason, setRejectReason] = useState("");
 
     const [errorMessage, setErrorMessage] = useState("");
+
+    const isEditable = booking && (
+        (booking.status === "pending" && userRole === "supervisor") ||
+        (booking.status === "supervisor-approved" && userRole === "sdag")
+    );
+
+    useEffect(() => {
+        const role = localStorage.getItem("userRole");
+        console.log("User role from localStorage:", role);
+        setUserRole(role);
+    }, []);
 
     useEffect(() => {
         const fetchBooking = async () => {
@@ -42,7 +56,7 @@ const BookingDetails = () => {
                 setErrorMessage("");
             }, 1000);
 
-            return () => clearTimeout(timer); 
+            return () => clearTimeout(timer);
         }
     }, [errorMessage]);
 
@@ -57,7 +71,7 @@ const BookingDetails = () => {
             formData.append("approverPosition", approverPosition);
             if (signatureFile) signatureUrl = await MediaUpload(signatureFile);
 
-            await axios.post(`http://localhost:3000/admin/supervisor/approve/${id}`, 
+            await axios.post(`http://localhost:3000/admin/supervisor/approve/${id}`,
                 {
                     approverName,
                     approverPosition,
@@ -76,18 +90,18 @@ const BookingDetails = () => {
             setErrorMessage("Approval failed. Please check the inputs and try again.");
         }
     };
-    
+
     // Handle Supervisor Rejection
     const handleRejectSubmit = async () => {
         try {
             const token = localStorage.getItem("token");
             await axios.post(
                 `http://localhost:3000/admin/supervisor/reject/${id}`,
-                { 
+                {
                     reason: rejectReason,
-                 },
-                { 
-                    headers: { Authorization: `Bearer ${token}` } 
+                },
+                {
+                    headers: { Authorization: `Bearer ${token}` }
                 }
             );
             setShowProcessPopup(false);
@@ -96,7 +110,7 @@ const BookingDetails = () => {
             console.error(err);
             setErrorMessage("Rejection failed. Please try again.");
         }
-    };            
+    };
 
     if (!booking) {
         return (
@@ -106,12 +120,45 @@ const BookingDetails = () => {
         );
     }
 
+    const handleSdagApprove = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            await axios.post(
+                `http://localhost:3000/admin/sdag/approve/${id}`,
+                { approverName: "SDAG Name", approverPosition: "SDAG Position" },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            setShowSdagPopup(false);
+            navigate("/admin"); // refresh list
+        } catch (err) {
+            console.error(err);
+            setErrorMessage("SDAG approval failed. Try again.");
+        }
+    };
+
+    const handleSdagReject = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            await axios.post(
+                `http://localhost:3000/admin/sdag/reject/${id}`,
+                { approverName: "SDAG Name", approverPosition: "SDAG Position" },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            setShowSdagPopup(false);
+            navigate("/admin");
+        } catch (err) {
+            console.error(err);
+            setErrorMessage("SDAG rejection failed. Try again.");
+        }
+    };
+
+
     const ErrorAlert = ({ message }) =>
-    message ? (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-center">
-            {message}
-        </div>
-    ) : null;
+        message ? (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-center">
+                {message}
+            </div>
+        ) : null;
 
 
     return (
@@ -165,15 +212,14 @@ const BookingDetails = () => {
 
                         {/* Substitutes */}
                         {booking.substitutes?.length > 0 && (
-                            <Section title="Substitutes">
+                            <Section title="People Staying">
                                 <div className="overflow-x-auto">
                                     <table className="min-w-full border border-gray-300 rounded-md">
                                         <thead className="bg-gray-100">
                                             <tr>
                                                 <th className="border px-4 py-2 text-left">Name</th>
                                                 <th className="border px-4 py-2 text-left">NIC</th>
-                                                <th className="border px-4 py-2 text-left">Designation</th>
-                                                <th className="border px-4 py-2 text-left">Department</th>
+                                                <th className="border px-4 py-2 text-left">Relationship</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -181,8 +227,7 @@ const BookingDetails = () => {
                                                 <tr key={idx} className="hover:bg-gray-50">
                                                     <td className="border px-4 py-2">{s.name}</td>
                                                     <td className="border px-4 py-2">{s.nic}</td>
-                                                    <td className="border px-4 py-2">{s.designation}</td>
-                                                    <td className="border px-4 py-2">{s.department}</td>
+                                                    <td className="border px-4 py-2">{s.relationship}</td>
                                                 </tr>
                                             ))}
                                         </tbody>
@@ -205,16 +250,38 @@ const BookingDetails = () => {
 
                         {/* Process Button */}
                         <div className="text-center">
-                            <button
-                                onClick={() => setShowProcessPopup(true)}
-                                className={`px-6 py-3 rounded-md text-lg font-semibold 
-                                            ${booking.status !== "pending"  
-                                                ? "bg-gray-400 cursor-not-allowed" 
-                                                : "bg-green-700 hover:bg-green-800 text-white"}`}
-                                disabled={booking.status !== "pending"}
-                            >
-                                Review For Approval
-                            </button>
+                            <div className="text-center">
+                                {userRole === "supervisor" && booking.status === "pending" && (
+                                    <button
+                                        onClick={() => setShowProcessPopup(true)}
+                                        className={`px-6 py-3 rounded-md text-lg font-semibold 
+                        bg-green-700 hover:bg-green-800 text-white`}
+                                    >
+                                        Review For Approval
+                                    </button>
+                                )}
+
+                                {userRole === "sdag" && booking.status === "supervisor-approved" && (
+                                    <button
+                                        onClick={() => setShowSdagPopup(true)}
+                                        className={`px-6 py-3 rounded-md text-lg font-semibold 
+                        bg-green-700 hover:bg-green-800 text-white`}
+                                    >
+                                        Approve
+                                    </button>
+                                )}
+
+                                {/* Disabled if already approved/rejected */}
+                                {!isEditable && (
+                                    <button
+                                        disabled
+                                        className="px-6 py-3 rounded-md text-lg font-semibold bg-gray-400 text-white cursor-not-allowed"
+                                    >
+                                        {booking.status.includes("approved") ? "Approved" : "Rejected"}
+                                    </button>
+                                )}
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -264,24 +331,22 @@ const BookingDetails = () => {
                         </div>
 
                         {/* Rejection Reason */}
-                        {rejectReason !== null && (
-                            <div>
-                                <label
-                                    htmlFor="rejectReason"
-                                    className="block text-sm font-medium text-gray-600 mb-2"
-                                >
-                                    Reason for Rejection (if applicable)
-                                </label>
-                                <textarea
-                                    id="rejectReason"
-                                    placeholder="Enter reason..."
-                                    value={rejectReason}
-                                    onChange={(e) => setRejectReason(e.target.value)}
-                                    className="w-full border border-gray-300 rounded-md p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-700"
-                                    rows={4}
-                                />
-                            </div>
-                        )}
+                        <div>
+                            <label
+                                htmlFor="rejectReason"
+                                className="block text-sm font-medium text-gray-600 mb-2"
+                            >
+                                Reason for Rejection (if applicable)
+                            </label>
+                            <textarea
+                                id="rejectReason"
+                                placeholder="Enter reason..."
+                                value={rejectReason}
+                                onChange={(e) => setRejectReason(e.target.value)}
+                                className="w-full border border-gray-300 rounded-md p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-700"
+                                rows={4}
+                            />
+                        </div>
                     </div>
                 </Popup>
 
@@ -367,8 +432,43 @@ const BookingDetails = () => {
                         </div>
                     </div>
                 </Popup>
-
             )}
+
+            {/* SDAG Confirm Popup */}
+            {userRole === "sdag" && booking.status === "supervisor-approved" && showSdagPopup && (
+                <Popup onClose={() => setShowSdagPopup(false)}>
+                    <div className="space-y-6">
+                        <h3 className="text-xl font-bold text-gray-800 mb-2 text-center">
+                            Confirm SDAG Approval
+                        </h3>
+                        <p className="text-gray-700 text-sm text-center">
+                            Are you sure you want to approve this booking?
+                        </p>
+
+                        <div className="flex justify-end gap-3 mt-6">
+                            <button
+                                className="bg-green-700 hover:bg-green-800 text-white px-5 py-2 rounded-md font-medium shadow-sm"
+                                onClick={handleSdagApprove}
+                            >
+                                Approve
+                            </button>
+                            <button
+                                className="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-md font-medium shadow-sm"
+                                onClick={handleSdagReject} 
+                            >
+                                Reject
+                            </button>
+                            <button
+                                className="bg-gray-400 hover:bg-gray-500 text-white px-5 py-2 rounded-md font-medium shadow-sm"
+                                onClick={() => setShowSdagPopup(false)}
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </Popup>
+            )}
+
         </div>
     );
 };
