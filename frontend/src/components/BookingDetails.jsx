@@ -165,15 +165,14 @@ const BookingDetails = () => {
 
                         {/* Substitutes */}
                         {booking.substitutes?.length > 0 && (
-                            <Section title="Substitutes">
+                            <Section title="People Staying">
                                 <div className="overflow-x-auto">
                                     <table className="min-w-full border border-gray-300 rounded-md">
                                         <thead className="bg-gray-100">
                                             <tr>
                                                 <th className="border px-4 py-2 text-left">Name</th>
                                                 <th className="border px-4 py-2 text-left">NIC</th>
-                                                <th className="border px-4 py-2 text-left">Designation</th>
-                                                <th className="border px-4 py-2 text-left">Department</th>
+                                                <th className="border px-4 py-2 text-left">Relationship</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -181,8 +180,7 @@ const BookingDetails = () => {
                                                 <tr key={idx} className="hover:bg-gray-50">
                                                     <td className="border px-4 py-2">{s.name}</td>
                                                     <td className="border px-4 py-2">{s.nic}</td>
-                                                    <td className="border px-4 py-2">{s.designation}</td>
-                                                    <td className="border px-4 py-2">{s.department}</td>
+                                                    <td className="border px-4 py-2">{s.relationship}</td>
                                                 </tr>
                                             ))}
                                         </tbody>
