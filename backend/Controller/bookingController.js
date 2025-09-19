@@ -76,7 +76,7 @@ export async function getBookings(req, res) {
       filter = {}; 
     } else if (req.user.role === "sdag") {
       // SDAG sees only bookings approved by supervisor
-      filter.status = "supervisor-approved";
+      filter.status = { $in: ["supervisor-approved", "sdag-approved", "sdag-rejected"] };
     } else {
       return res.status(403).json({ success: false, error: "Not authorized" });
     }
@@ -216,9 +216,12 @@ export async function sdagApprove(req, res) {
     await sendEmail(
       booking.email,
       "SDAG Approval - Circuit Bungalow Booking",
-      `<p>Dear ${booking.fullName},</p>
-      <p>Your booking request for <b>${booking.requestedBungalow}</b> has been <b>approved by SDAG</b>.</p>
-      <p>Please proceed with payment to confirm your booking.</p>`
+      `<p>Mr./Ms. ${booking.fullName},</p>
+      As per your request made on ${booking.applicantDate}, I hereby approve the reservation of the Circuit Bungalow / Holiday Resort ${booking.requestedBungalow} 
+      from ${booking.startDate} day at 10.00 a.m. until ${booking.endDate} day at 9.00 a.m.`
+      
+
+
     );
 
     res.json({ success: true, message: "Booking approved by SDAG", booking });
