@@ -117,11 +117,12 @@ export async function supervisorApprove(req, res) {
 
     // Send email to applicant
     await sendEmail(
-      booking.email,
-      "Supervisor Approval - Circuit Bungalow Booking",
-      `<p>Dear ${booking.fullName},</p>
-       <p>Your booking request for <b>${booking.requestedBungalow}</b> has been <b>approved by Supervisor</b>.</p>
-       <p>Next step: SDAG approval.</p>`
+      "sdag@example.com", // Replace with real SDAG email or get dynamically
+      "New Booking Approval Required",
+      `<p>Dear SDAG,</p>
+       <p>A new booking request for <b>${booking.requestedBungalow}</b> by ${booking.fullName} requires your approval.</p>
+       <p>Please review it.</p>`
+       
     );
 
     
@@ -162,7 +163,9 @@ export async function supervisorReject(req, res) {
       booking.email,
       "Booking Rejected - Supervisor",
       `<p>Dear ${booking.fullName},</p>
-      <p>Unfortunately, your booking request for <b>${booking.requestedBungalow}</b> has been <b>rejected by Supervisor</b>.</p>`
+      <p>Unfortunately, your booking request for <b>${booking.requestedBungalow}</b> has been <b>rejected by Supervisor</b>.</p>
+      <p>Reason: ${reason}</p>`
+      
     );
 
     res.json({ success: true, message: "Booking rejected by supervisor", booking });
