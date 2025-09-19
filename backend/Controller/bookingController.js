@@ -67,15 +67,28 @@ export const createBooking = async (req, res) => {
 };
 
 
-export async function getBookings(req, res){
-    try{
-        const bookings = await BookingFormModel.find();
-        res.json({ success: true, bookings });
-    }catch (error) {
+export async function getBookings(req, res) {
+  try {
+    let filter = {};
+
+    if (req.user.role === "supervisor") {
+      // Supervisor sees all bookings
+      filter = {}; 
+    } else if (req.user.role === "sdag") {
+      // SDAG sees only bookings approved by supervisor
+      filter.status = "supervisor-approved";
+    } else {
+      return res.status(403).json({ success: false, error: "Not authorized" });
+    }
+
+    const bookings = await BookingFormModel.find(filter).sort({ createdAt: -1 });
+    res.json({ success: true, bookings });
+  } catch (error) {
     console.error("Error fetching bookings:", error);
     res.status(500).json({ success: false, error: "Server error" });
   }
 }
+
 
 // find a single booking details
 export async function getBookingById(req,res){

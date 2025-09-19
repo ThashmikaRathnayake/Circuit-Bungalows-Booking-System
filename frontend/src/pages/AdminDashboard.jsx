@@ -6,11 +6,14 @@ import { useNavigate } from "react-router-dom";
 
 const AdminDashboard = () => {
   const [requests, setRequests] = useState([]);
-
+  const [userRole, setUserRole] = useState("");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchRequests();
+    useEffect(() => {
+    const role = localStorage.getItem("userRole");
+    console.log("User role from localStorage:", role);
+    setUserRole(role);
+    fetchRequests(role);
   }, []);
 
   const fetchRequests = async () => {
@@ -42,8 +45,10 @@ const AdminDashboard = () => {
       {/* Main Content */}
       <main className="flex-1 p-8 bg-gray-100">
         <h2 className="text-3xl font-bold text-gray-800 mb-6">
-          Booking Requests
-        </h2>
+  Booking Requests (
+  {userRole === "supervisor" ? "Supervisor" : userRole === "sdag" ? "SDAG" : "User"}
+  )
+</h2>
 
         <div className="overflow-x-auto bg-white rounded-lg shadow-md border border-gray-200">
           <table className="min-w-full border border-gray-300 rounded-md shadow-sm">

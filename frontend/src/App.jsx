@@ -18,7 +18,7 @@ const RootRedirect = () => {
   const role = localStorage.getItem("userRole");
 
   if (!token) return <Navigate to="/login" replace />;
-  if (role === "admin") return <Navigate to="/admin" replace />;
+  if (role === "supervisor" || role === "sdag") return <Navigate to="/admin" replace />;
   return <Navigate to="/home" replace />; 
 };
 
@@ -43,7 +43,7 @@ const router = createBrowserRouter([
 
   //Protected Routes
   {
-  element: <ProtectedRoute allowedRoles={['user', 'admin']} />,
+  element: <ProtectedRoute allowedRoles={['user', 'supervisor', 'sdag']} />,
   children: [
     { path: "/infoPage", element: <InfoPage /> },
     { path: "/booking/:circuit", element: <BookingPage /> }
@@ -51,7 +51,7 @@ const router = createBrowserRouter([
   },
   
   {
-    element: <ProtectedRoute allowedRoles={['admin']} />,
+    element: <ProtectedRoute allowedRoles={['supervisor', 'sdag']} />,
     children: [
       {
         path: "/admin",

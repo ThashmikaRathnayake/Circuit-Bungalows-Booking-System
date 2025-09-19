@@ -63,7 +63,7 @@ const Login = () => {
             localStorage.setItem("userRole", res.data.user.role);
 
             // Navigate based on role
-            if (res.data.user.role === "admin") {
+            if (res.data.user.role === "supervisor" || res.data.user.role === "sdag") {
                 navigate("/admin",{ replace: true }); // admin dashboard
             } else {
                 navigate("/", { replace: true }); // normal user homepage

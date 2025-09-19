@@ -43,7 +43,7 @@ const Navbar = () => {
 
             {/* desktop */}
             <ul className="hidden lg:flex space-x-6 text-lg text-gray-100 items-center">
-                {userRole === "admin" ? (
+                {userRole === "supervisor" || userRole === "sdag" ? (
                     <>
                         <li>
                             <Link to="/admin" className="hover:text-gray-300 transition-colors duration-300">
@@ -108,7 +108,7 @@ const Navbar = () => {
             {isOpen && (
                 <div className="absolute top-24 left-0 w-full bg-gray-600 shadow-lg lg:hidden z-50">
                     <ul className="flex flex-col items-center space-y-4 py-6 text-gray-100 font-serif text-lg">
-                        {userRole === "admin" ? (
+                        {userRole === "supervisor" || userRole === "sdag" ? (
                             <>
                                 <li>
                                     <Link to="/admin" className="hover:text-gray-300 transition-colors duration-300">
