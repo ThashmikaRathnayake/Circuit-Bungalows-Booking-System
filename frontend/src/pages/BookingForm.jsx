@@ -59,8 +59,8 @@ export default function BookingForm() {
   useEffect(() => {
   if (location.state?.bungalow) {
       const bungalowKey = location.state.bungalow
-        .replace(/\s+/g, " ")   // normalize spaces if needed
-        .replace(/\bcb\b/i, "CB") // make CB uppercase if needed
+        .replace(/\s+/g, " ") 
+        .replace(/\bcb\b/i, "CB")
         .trim();
       setFormData((prev) => ({
         ...prev,
@@ -230,6 +230,12 @@ export default function BookingForm() {
             <label className="block font-medium">Address (Personal)</label>
             <input name="addressPersonal" value={formData.addressPersonal} onChange={handleChange} className="w-full p-2 border rounded" required/>
           </div>
+        </div>
+
+        <div>
+          <label className="block font-medium">Email</label>
+          <input name="email" value={formData.email} onChange={handleChange} className="w-full p-2 border rounded" />
+          {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
         </div>
 
         <div className="grid grid-cols-2 gap-4">
