@@ -23,9 +23,12 @@ const BookingDetails = () => {
 
     const [errorMessage, setErrorMessage] = useState("");
 
-    const isEditable = booking && (
-        (booking.status === "pending" && userRole === "supervisor") ||
-        (booking.status === "supervisor-approved" && userRole === "sdag")
+    const canSupervisorAct = booking && userRole === "supervisor" && booking.status === "pending";
+    const canSdagAct = booking && userRole === "sdag" && booking.status === "supervisor-approved";
+    const isCompletelyProcessed = booking && (
+        booking.status === "supervisor-rejected" || 
+        booking.status === "sdag-approved" || 
+        booking.status === "sdag-rejected"
     );
 
     useEffect(() => {
@@ -250,38 +253,47 @@ const BookingDetails = () => {
 
                         {/* Process Button */}
                         <div className="text-center">
-                            <div className="text-center">
-                                {userRole === "supervisor" && booking.status === "pending" && (
-                                    <button
-                                        onClick={() => setShowProcessPopup(true)}
-                                        className={`px-6 py-3 rounded-md text-lg font-semibold 
-                        bg-green-700 hover:bg-green-800 text-white`}
-                                    >
-                                        Review For Approval
-                                    </button>
-                                )}
+                            {/* Supervisor can act on pending applications */}
+                            {canSupervisorAct && (
+                                <button
+                                    onClick={() => setShowProcessPopup(true)}
+                                    className="px-6 py-3 rounded-md text-lg font-semibold bg-green-700 hover:bg-green-800 text-white"
+                                >
+                                    Review For Approval
+                                </button>
+                            )}
 
-                                {userRole === "sdag" && booking.status === "supervisor-approved" && (
-                                    <button
-                                        onClick={() => setShowSdagPopup(true)}
-                                        className={`px-6 py-3 rounded-md text-lg font-semibold 
-                        bg-green-700 hover:bg-green-800 text-white`}
-                                    >
-                                        Approve
-                                    </button>
-                                )}
+                            {/* SDAG can act on supervisor-approved applications */}
+                            {canSdagAct && (
+                                <button
+                                    onClick={() => setShowSdagPopup(true)}
+                                    className="px-6 py-3 rounded-md text-lg font-semibold bg-green-700 hover:bg-green-800 text-white"
+                                >
+                                    SDAG Review
+                                </button>
+                            )}
 
-                                {/* Disabled if already approved/rejected */}
-                                {!isEditable && (
-                                    <button
-                                        disabled
-                                        className="px-6 py-3 rounded-md text-lg font-semibold bg-gray-400 text-white cursor-not-allowed"
-                                    >
-                                        {booking.status.includes("approved") ? "Approved" : "Rejected"}
-                                    </button>
-                                )}
-                            </div>
+                            {/* Show status if no actions available */}
+                            {isCompletelyProcessed && (
+                                <button
+                                    disabled
+                                    className="px-6 py-3 rounded-md text-lg font-semibold bg-gray-400 text-white cursor-not-allowed"
+                                >
+                                    {booking.status === "supervisor-rejected" ? "Rejected by Supervisor" :
+                                     booking.status === "sdag-approved" ? "Approved by SDAG" :
+                                     booking.status === "sdag-rejected" ? "Rejected by SDAG" : "Processed"}
+                                </button>
+                            )}
 
+                            {/* Show waiting message for applications pending SDAG approval */}
+                            {booking.status === "supervisor-approved" && userRole === "supervisor" && (
+                                <button
+                                    disabled
+                                    className="px-6 py-3 rounded-md text-lg font-semibold bg-blue-400 text-white cursor-not-allowed"
+                                >
+                                    Waiting for SDAG Approval
+                                </button>
+                            )}
                         </div>
                     </div>
                 </div>

@@ -8,6 +8,7 @@ import { IoLocationOutline } from "react-icons/io5";
 import { IoIosInformationCircleOutline } from "react-icons/io";
 import { FiPhone } from "react-icons/fi";
 import { Accordion, AccordionItem } from "../components/Accordion";
+import AvailabilityCalendar from "../components/AvailabilityCalendar";
 import axios from "axios";
 
 export default function BookingPage() {
@@ -15,6 +16,8 @@ export default function BookingPage() {
   const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true); 
+  const [showCalendar, setShowCalendar] = useState(false);
+
 
   useEffect(() => {
     const fetchBungalow = async () => {
@@ -159,15 +162,28 @@ export default function BookingPage() {
                   )}
                 </div>
                 <div className="flex gap-10">
-                  <button className="w-[200px] h-[50px] rounded-lg bg-gray-700 cursor-pointer mt-10 text-white hover:bg-gray-500 " onClick={()=>{navigate("/bookingForm",{ state: { bungalow: data.name } })}}>Book this bungalow</button>
-                  <button className="w-[200px] h-[50px] rounded-lg mt-10 bg-gray-700 text-white hover:bg-gray-500 cursor-pointer">Check Availability</button>
+                  <button 
+                    className="w-[200px] h-[50px] rounded-lg bg-gray-700 cursor-pointer mt-10 text-white hover:bg-gray-500 " 
+                    onClick={()=>{navigate("/bookingForm",{ state: { bungalow: data.name } })}}>
+                      Book this bungalow
+                  </button>
+                  <button 
+                    className="w-[200px] h-[50px] rounded-lg mt-10 bg-gray-700 text-white hover:bg-gray-500 cursor-pointer"
+                    onClick={() => setShowCalendar(true)}>
+                      Check Availability
+                  </button>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-
+      {showCalendar && (
+        <AvailabilityCalendar
+          bungalowName={data.name} // Make sure this matches exactly with the booking form
+          onClose={() => setShowCalendar(false)}
+        />
+      )}
       <Footer />
     </div>
   )

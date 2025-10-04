@@ -270,26 +270,18 @@ export async function sdagReject(req, res) {
   }
 }
 
-// Payment Confirm
-// export async function confirmPayment(req, res) {
-//   try {
-//     const booking = await BookingFormModel.findById(req.params.id);
-//     if (!booking) return res.status(404).json({ success: false, error: "Booking not found" });
-
-//     booking.status = "confirmed";
-//     await booking.save();
-
-//     await sendEmail(
-//       booking.email,
-//       "Booking Confirmed ✅",
-//       `<p>Dear ${booking.fullName},</p>
-//       <p>Your booking request for <b>${booking.requestedBungalow}</b> is now <b>confirmed</b>.</p>
-//       <p>Thank you for using the Survey Department booking system!</p>`
-//     );
-
-//     res.json({ success: true, message: "Booking payment confirmed", booking });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ success: false, error: "Server error" });
-//   }
-// }
+// Check availability
+export async function checkAvailability(req, res) {
+  try {
+    const { bungalowName } = req.params;
+    const bookings = await BookingFormModel.find({
+      requestedBungalow: bungalowName,
+      status: "sdag-approved",
+    }).select("leaveFrom leaveTo -_id");
+    console.log(`Found ${bookings.length} approved bookings for ${bungalowName}`);
+    res.json(bookings);
+  } catch (err) {
+    console.error("Error fetching availability:", err);
+    res.status(500).json({ message: "Error fetching booked dates" });
+  }
+}
