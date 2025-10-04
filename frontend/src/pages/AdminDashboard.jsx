@@ -11,19 +11,17 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     const role = localStorage.getItem("userRole");
-    console.log("User role from localStorage:", role);
     setUserRole(role);
     fetchRequests(role);
   }, []);
 
-  const fetchRequests = async ( role ) => {
+  const fetchRequests = async (role) => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.get("http://localhost:3000/admin/requests", {
         headers: { Authorization: `Bearer ${token}` },
-        params: { role } 
+        params: { role },
       });
-      console.log(res.data);
       setRequests(res.data.bookings || []);
     } catch (err) {
       console.error(err);
@@ -31,72 +29,91 @@ const AdminDashboard = () => {
   };
 
   const statusClasses = {
-    "supervisor-approved": "bg-green-100 text-green-700",
-    "sdag-approved": "bg-green-300 text-green-700",
-    "supervisor-rejected": "bg-red-100 text-red-700",
-    "sdag-rejected": "bg-red-300 text-red-700",
-    "confirmed": "bg-gray-100 text-gray-700",
-    "pending": "bg-yellow-100 text-yellow-700",
+    "supervisor-approved": "bg-gray-100 text-gray-800 border-l-4 border-green-500",
+    "sdag-approved": "bg-gray-100 text-gray-800 border-l-4 border-gray-500",
+    "supervisor-rejected": "bg-gray-100 text-gray-800 border-l-4 border-red-500",
+    "sdag-rejected": "bg-gray-100 text-gray-800 border-l-4 border-red-700",
+    "pending": "bg-gray-100 text-gray-800 border-l-4 border-yellow-500",
   };
 
+  const statusLabels = {
+  "supervisor-approved": "Reviewed by Supervisor",
+  "sdag-approved": "Confirmed",
+  "supervisor-rejected": "Not Recommended by Supervisor",
+  "sdag-rejected": "Rejected by SDAG",
+  "pending": "Awaiting Review",
+};
+
+
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-gray-50 text-gray-800">
       <Navbar />
 
       {/* Main Content */}
-      <main className="flex-1 p-8 bg-gray-100">
-        <h2 className="text-3xl font-bold text-gray-800 mb-6">
-          Booking Requests (
-          {userRole === "supervisor" ? "Supervisor" : userRole === "sdag" ? "SDAG" : "User"}
-          )
-        </h2>
+      <main className="flex-1 px-8 py-10">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-6 tracking-wide">
+            Booking Requests{" "}
+            <span className="text-gray-500 text-lg font-normal">
+              ({userRole === "supervisor"
+                ? "Supervisor"
+                : userRole === "sdag"
+                ? "SDAG"
+                : "User"}
+              )
+            </span>
+          </h2>
 
-        <div className="overflow-x-auto bg-white rounded-lg shadow-md border border-gray-200">
-          <table className="min-w-full border border-gray-300 rounded-md shadow-sm">
-            <thead className="bg-gray-100 text-gray-700">
-              <tr>
-                <th className="px-6 py-3 text-left border">Full Name</th>
-                <th className="px-6 py-3 text-left border">Bungalow</th>
-                <th className="px-6 py-3 text-left border">Submitted Date</th>
-                <th className="px-6 py-3 text-left border">Status</th>
-                <th className="px-6 py-3 text-center border">Action</th>
-              </tr>
-            </thead>
-
-            <tbody className="bg-white divide-y divide-gray-200">
-              {requests.length === 0 ? (
+          <div className="bg-white shadow-sm rounded-lg border border-gray-200 overflow-hidden">
+            <table className="min-w-full border-collapse">
+              <thead className="bg-gray-100 text-gray-700 border-b border-gray-300">
                 <tr>
-                  <td colSpan={3} className="text-center p-6 text-gray-500">
-                    No booking requests found
-                  </td>
+                  <th className="px-6 py-3 text-center font-medium border-r ">Full Name</th>
+                  <th className="px-6 py-3 text-center font-medium border-r">Bungalow</th>
+                  <th className="px-6 py-3 text-center font-medium border-r">Submitted Date</th>
+                  <th className="px-6 py-3 text-center font-medium border-r">Status</th>
+                  <th className="px-6 py-3 text-center font-medium">Action</th>
                 </tr>
-              ) : (
-                requests.map((req) => (
-                  <tr key={req._id}>
-                    <td className="px-6 py-4 text-gray-800 border">{req.fullName}</td>
-                    <td className="px-6 py-4 text-gray-800 border">{req.requestedBungalow}</td>
-                    <td className="px-6 py-4 text-gray-800 border">{req.applicantDate}</td>
-                    <td className="px-6 py-3 border capitalize">
-                      <span
-                        className={`inline-block w-40 text-center px-3 py-1 rounded text-sm font-medium ${statusClasses[req.status] || statusClasses["pending"]
-                          }`}
-                      >
-                        {req.status || "Pending"}
-                      </span>
-                    </td>
-                    <td className="px-6 py-3 border text-center">
-                      <button
-                        onClick={() => navigate(`/admin/booking/${req._id}`)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition"
-                      >
-                        View Details
-                      </button>
+              </thead>
+
+              <tbody className="divide-y divide-gray-200 text-sm">
+                {requests.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan="5"
+                      className="text-center py-10 text-gray-500 italic"
+                    >
+                      No booking requests found
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  requests.map((req) => (
+                    <tr key={req._id} className="hover:bg-gray-50 transition">
+                      <td className="px-6 py-3 border-r text-center">{req.fullName}</td>
+                      <td className="px-6 py-3 border-r text-center">{req.requestedBungalow}</td>
+                      <td className="px-6 py-3 border-r text-center">{req.applicantDate}</td>
+                      <td className="px-6 py-3 border-r text-center">
+                        <span
+                          className={`inline-flex justify-center items-center text-sm font-medium rounded-md h-12 w-50 ${statusClasses[req.status] || statusClasses["pending"]
+                            }`}
+                        >
+                          {statusLabels[req.status] || "Awaiting Review"}
+                        </span>
+                      </td>
+                      <td className="px-6 py-3 text-center">
+                        <button
+                          onClick={() => navigate(`/admin/booking/${req._id}`)}
+                          className="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-md text-sm transition"
+                        >
+                          View Details
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </main>
 
