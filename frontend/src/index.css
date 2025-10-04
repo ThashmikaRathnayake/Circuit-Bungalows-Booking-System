@@ -7,3 +7,13 @@ html {
 body {
   font-family: 'Roboto', sans-serif;
 }
+
+.react-calendar__tile--disabled {
+  background-color: #fca5a5 !important;
+  color: #dc2626 !important;
+  cursor: not-allowed !important;
+}
+
+.react-calendar__tile--disabled:hover {
+  background-color: #f87171 !important;
+}
