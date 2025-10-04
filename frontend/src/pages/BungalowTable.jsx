@@ -57,53 +57,70 @@ export default function AdminBungalowTable() {
 
   return (
     <>
-    <Navbar/>
-    <div className="p-6 bg-white shadow-md rounded-lg relative">
-      <h1 className="text-2xl font-bold mb-4">Bungalows</h1>
-      <button className="absolute right-3 top-4 p-2 bg-gray-500 text-white rounded-xl hover:bg-gray-600 cursor-pointer" onClick={()=>{navigate("/admin/addLocation")}}>+ Add Bungalow</button>
-      <table className="min-w-full border">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="p-2 border">Name</th>
-            <th className="p-2 border">Bedrooms</th>
-            <th className="p-2 border">Living Areas</th>
-            <th className="p-2 border">Bathrooms</th>
-            <th className="p-2 border">Sleeps</th>
-            <th className="p-2 border">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {bungalow.map((b) => (
-            <tr key={b._id} className="text-center border-b border-collapse">
-              <td className="p-2 border">{b.name}</td>
-              <td className="p-2 border">{b.bedRooms}</td>
-              <td className="p-2 border">{b.Living_area}</td>
-              <td className="p-2 border">{b.bathrooms}</td>
-              <td className="p-2 border">{b.sleeps}</td>
-              <td className="p-2 flex justify-center gap-2 ">
-                <button
-                  onClick={() => handleView(b)}
-                  className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded cursor-pointer"
-                >
-                  View
-                </button>
-                <button
-                  onClick={() => navigate(`/admin/editLocation`,{state:b})}
-                  className="bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded cursor-pointer"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => handleDelete(b._id)}
-                  className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded cursor-pointer"
-                >
-                  Delete
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <Navbar />
+      <div className="p-6 bg-gray-50 min-h-screen">
+        <div className="max-w-7xl mx-auto bg-white shadow-md rounded-lg p-6 relative">
+          <h1 className="text-2xl font-bold text-gray-800 mb-4">Bungalows</h1>
+          <button
+            onClick={() => navigate("/admin/addLocation")}
+            className="absolute top-6 right-6 bg-gray-700 text-white px-4 py-2 rounded-md hover:bg-gray-800 transition"
+          >
+            + Add Bungalow
+          </button>
+
+          <div className="overflow-x-auto mt-4">
+            <table className="min-w-full border border-gray-200">
+              <thead className="bg-gray-100 text-gray-700">
+                <tr>
+                  <th className="p-3 border-r text-left font-medium">Name</th>
+                  <th className="p-3 border-r text-left font-medium">Bedrooms</th>
+                  <th className="p-3 border-r text-left font-medium">Living Areas</th>
+                  <th className="p-3 border-r text-left font-medium">Bathrooms</th>
+                  <th className="p-3 border-r text-left font-medium">Sleeps</th>
+                  <th className="p-3 text-center font-medium">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200 text-gray-700">
+                {bungalow.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="text-center py-6 text-gray-500 italic">
+                      No bungalows found
+                    </td>
+                  </tr>
+                ) : (
+                  bungalow.map((b) => (
+                    <tr key={b._id} className="hover:bg-gray-50 transition">
+                      <td className="p-3 border-r">{b.name}</td>
+                      <td className="p-3 border-r">{b.bedRooms}</td>
+                      <td className="p-3 border-r">{b.Living_area}</td>
+                      <td className="p-3 border-r">{b.bathrooms}</td>
+                      <td className="p-3 border-r">{b.sleeps}</td>
+                      <td className="p-3 flex justify-center gap-2">
+                        <button
+                          onClick={() => handleView(b)}
+                          className="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded-md text-sm transition"
+                        >
+                          View
+                        </button>
+                        <button
+                          onClick={() => navigate(`/admin/editLocation`, { state: b })}
+                          className="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded-md text-sm transition"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDelete(b._id)}
+                          className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-md text-sm transition"
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
       {/* Modal */}
       {isModalOpen && selectedBungalow && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -177,7 +194,7 @@ export default function AdminBungalowTable() {
           </div>
         </div>
       )}
-
+        </div>
     </div>
     <Footer/>
     </>
