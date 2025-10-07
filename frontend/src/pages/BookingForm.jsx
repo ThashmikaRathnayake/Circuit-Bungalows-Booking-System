@@ -126,7 +126,7 @@ export default function BookingForm() {
   const addRow = () => {
     setFormData({
       ...formData,
-      substitutes: [...formData.substitutes, { name: "", nic: "", designation: "", department: "" }],
+      substitutes: [...formData.substitutes, { name: "", nic: "", relationship: "" }],
     });
   };
 
