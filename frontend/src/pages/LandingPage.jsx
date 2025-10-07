@@ -35,6 +35,7 @@ const Landing = () => {
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link
               to="/login"
+              state={{ isLogin: true }}
               className="px-8 py-3 rounded-full font-semibold text-white bg-gradient-to-br from-[#124C82] to-[#0D3C68] shadow-md hover:shadow-xl transform hover:-translate-y-1 transition duration-300"
             >
               <i className="fas fa-sign-in-alt mr-2"></i> Login
@@ -42,6 +43,7 @@ const Landing = () => {
 
             <Link
               to="/login"
+              state={{ isLogin: false }}
               className="px-8 py-3 rounded-full font-semibold border-2 border-[#124C82] text-[#124C82] bg-transparent hover:bg-[#124C82]/10 shadow-md transform hover:-translate-y-1 transition duration-300"
             >
               <i className="fas fa-user-plus mr-2"></i> Register
