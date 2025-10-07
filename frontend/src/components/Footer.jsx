@@ -55,7 +55,7 @@ const Footer = () => {
                             href="https://web.facebook.com/survey.gov.lk/?_rdc=1&_rdr"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-2 bg-gray-800 rounded-full text-white hover:bg-green-500 transition"
+                            className="p-2 bg-gray-800 rounded-full text-white hover:bg-gray-900 transition"
                         >
                             <FaFacebookF />
                         </a>
@@ -63,7 +63,7 @@ const Footer = () => {
                             href="https://www.survey.gov.lk/"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-2 bg-gray-800 rounded-full text-white hover:bg-green-500 transition"
+                            className="p-2 bg-gray-800 rounded-full text-white hover:bg-gray-900 transition"
                         >
                             <FaGoogle />
                         </a>
@@ -71,7 +71,7 @@ const Footer = () => {
                             href="https://www.youtube.com/channel/UC8aurmZ_wN2lYoGUeZzFesQ"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-2 bg-gray-800 rounded-full text-white hover:bg-green-500 transition"
+                            className="p-2 bg-gray-800 rounded-full text-white hover:bg-gray-900 transition"
                         >
                             <FaYoutube />
                         </a>
