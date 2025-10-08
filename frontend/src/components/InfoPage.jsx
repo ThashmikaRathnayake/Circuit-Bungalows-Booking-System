@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
+import { useNavigate } from "react-router-dom";
 
 const bungalows = [
   { name: "Diyathalawa CB", position: [6.822, 81.517], description: "A cozy bungalow in Diyathalawa." },
@@ -21,7 +22,6 @@ const faqs = [
   { question: "How do I book a bungalow?", answer: "Select your preferred bungalow on the map or location list, click 'Book Now', and follow the online reservation process." },
   { question: "How to contact support?", answer: "You can contact us via email at info@survey.gov.lk or call +94 11 234 5678 for assistance." },
   { question: "What facilities are available?", answer: "All bungalows provide basic amenities, including beds, clean washrooms, electricity, and scenic surroundings." },
-  { question: "Can I cancel or modify my booking?", answer: "Yes, you can modify or cancel your bookings by logging into your account and managing your reservations." },
 ];
 
 const rules = {
@@ -80,6 +80,7 @@ const InfoPage = () => {
   const [openIndex, setOpenIndex] = useState(null);
   const toggleFAQ = (index) => setOpenIndex(openIndex === index ? null : index);
   const [lang, setLang] = useState("en");
+  const navigate = useNavigate();
 
   return (
     <div className="bg-gray-100 min-h-screen text-gray-800">
@@ -165,8 +166,20 @@ const InfoPage = () => {
                   <h3 className="font-bold text-lg">{b.name}</h3>
                   <p className="my-2">{b.description}</p>
                   <div className="flex gap-2 mt-2">
-                    <button className="bg-gray-300 hover:bg-gray-400 px-3 py-1 rounded-md transition">View Details</button>
-                    <button className="bg-gray-100 hover:bg-gray-200 border border-gray-300 px-3 py-1 rounded-md transition">Book Now</button>
+                     <button
+                      onClick={() =>
+                        window.open(`https://www.google.com/maps/dir/?api=1&destination=${b.position[0]},${b.position[1]}`, "_blank")
+                      }
+                      className="bg-gray-300 hover:bg-gray-400 px-3 py-1 rounded-md transition"
+                    >
+                      Navigate
+                    </button>
+                    <button
+                      onClick={() => navigate(`/booking/${b.name.toLowerCase().replace(/\s+/g, '-')}`)}
+                      className="bg-gray-100 hover:bg-gray-200 border border-gray-300 px-3 py-1 rounded-md transition"
+                    >
+                      Book Now
+                    </button>
                   </div>
                 </Popup>
               </FlyToMarker>

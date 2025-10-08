@@ -1,10 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import surveyLogo from "../assets/surveylogo.png";
 
 const Login = () => {
-    const [isLogin, setIsLogin] = useState(true);
+    const location = useLocation();
+    const initialMode = location.state?.isLogin ?? true;
+
+    const [isLogin, setIsLogin] = useState(initialMode);
     const [containerHeight, setContainerHeight] = useState(0);
 
     const [name, setName] = useState("");

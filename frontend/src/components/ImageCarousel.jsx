@@ -6,6 +6,7 @@ import img1 from '../assets/locations/Diyathalawa.jpg';
 import img2 from '../assets/locations/Anuradhapura.jpg';
 import img3 from '../assets/locations/NuwaraEliya.jpg';
 import img4 from '../assets/locations/Jaffna.jpg';
+import img5 from '../assets/locations/surveyDepartment.jpg';
 import img8 from '../assets/locations/Kuchchaveli.jpg';
 import img9 from '../assets/locations/Pasikudah.jpg';
 import img10 from '../assets/locations/Girithale.jpg';
@@ -13,15 +14,15 @@ import img10 from '../assets/locations/Girithale.jpg';
 const classNames = (...classes) => classes.filter(Boolean).join(" ");
 
 const locations = [
-    { name: "Ampara", slug: "ampara", img: "https://i.pinimg.com/1200x/be/c3/7e/bec37e2c43e703f922f887db2578ce2e.jpg" },
+    { name: "Ampara", slug: "ampara", img: img5 },
     { name: "Diyathalawa CB", slug: "diyathalawa-cb", img: img1 },
     { name: "Diyathalawa HQ", slug: "diyathalawa-hq", img: img1 },
     { name: "Girithale", slug: "girithale", img: img10 },
     { name: "Pasikuda", slug: "pasikuda", img: img9 },
     { name: "Anuradhapura", slug: "anuradhapura", img: img2 },
     { name: "Jaffna", slug: "jaffna", img: img4 },
-    { name: "Katharagama CB", slug: "katharagama-cb", img: "https://i.pinimg.com/736x/47/dd/47/47dd47b0d66c2fa641e03e370bcb5433.jpg" },
-    { name: "Katharagama R1-R6", slug: "katharagama-r1-r6", img: "https://i.pinimg.com/736x/05/01/bc/0501bcd327d9df915e83154bbf9456e3.jpg" },
+    { name: "Katharagama CB", slug: "katharagama-cb", img: img5 },
+    { name: "Katharagama R1-R6", slug: "katharagama-r1-r6", img: img5 },
     { name: "Kuchchaveli", slug: "kuchchaveli", img: img8 },
     { name: "Nuwara Eliya", slug: "nuwaraeliya", img: img3 },
 ];
