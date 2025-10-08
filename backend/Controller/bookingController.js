@@ -218,10 +218,7 @@ export async function sdagApprove(req, res) {
       "SDAG Approval - Circuit Bungalow Booking",
       `<p>Mr./Ms. ${booking.fullName},</p>
       As per your request made on ${booking.applicantDate}, I hereby approve the reservation of the Circuit Bungalow / Holiday Resort ${booking.requestedBungalow} 
-      from ${booking.startDate} day at 10.00 a.m. until ${booking.endDate} day at 9.00 a.m.`
-      
-
-
+      from ${booking.leaveFrom} day at 10.00 a.m. until ${booking.leaveTo} day at 9.00 a.m.`
     );
 
     res.json({ success: true, message: "Booking approved by SDAG", booking });
