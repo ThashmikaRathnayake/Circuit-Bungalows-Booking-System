@@ -73,44 +73,47 @@ export default function BookingForm() {
 
 
   const validateForm = () => {
-  let newErrors = {};
+    let newErrors = {};
 
-  if (!formData.fullName.trim()) {
-    newErrors.fullName = "Full Name is required";
-  }
+    if (!formData.fullName.trim()) {
+      newErrors.fullName = "Full Name is required";
+    }
 
-  if (!formData.nic.trim()) {
-    newErrors.nic = "NIC/Employee No is required";
-  } else if (formData.nic.length < 10) {
-    newErrors.nic = "NIC must be at least 10 characters";
-  }
+    //  NIC must be exactly 12 digits (numeric only)
+    if (!/^[0-9]{12}$/.test(formData.nic.trim())) {
+      newErrors.nic = "NIC must contain exactly 12 digits (numbers only)";
+    }
 
-  if (!formData.phonePersonal.trim()) {
-    newErrors.phonePersonal = "Personal phone is required";
-  } else if (!/^[0-9]{10}$/.test(formData.phonePersonal)) {
-    newErrors.phonePersonal = "Phone must be 10 digits";
-  }
+    //  Phone numbers must be exactly 10 digits
+    if (!/^[0-9]{10}$/.test(formData.phonePersonal.trim())) {
+      newErrors.phonePersonal = "Personal phone must contain exactly 10 digits";
+    }
+    if (formData.phoneOfficial && !/^[0-9]{10}$/.test(formData.phoneOfficial.trim())) {
+      newErrors.phoneOfficial = "Official phone must contain exactly 10 digits";
+    }
 
-  if (!formData.requestedBungalow.trim()) {
-    newErrors.requestedBungalow = "Requested bungalow is required";
-  }
+    if (!formData.requestedBungalow.trim()) {
+      newErrors.requestedBungalow = "Requested bungalow is required";
+    }
 
-  if (!formData.leaveFrom || !formData.leaveTo) {
-    newErrors.leave = "Leave dates are required";
-  } else if (new Date(formData.leaveFrom) > new Date(formData.leaveTo)) {
-    newErrors.leave = "Leave From cannot be after Leave To";
-  }
+    if (!formData.leaveFrom || !formData.leaveTo) {
+      newErrors.leave = "Leave dates are required";
+    } else if (new Date(formData.leaveFrom) > new Date(formData.leaveTo)) {
+      newErrors.leave = "Leave From cannot be after Leave To";
+    }
 
-  if (!formData.applicantDate) {
-    newErrors.applicantDate = "Applicant date is required";
-  }
+    //  Leave Days must be 1–2 digits (01–99)
+    if (!/^[0-9]{1,2}$/.test(formData.leaveDays.trim())) {
+      newErrors.leaveDays = "Number of days must be 1 or 2 digits only";
+    }
 
-  setErrors(newErrors);
+    if (!formData.applicantDate) {
+      newErrors.applicantDate = "Applicant date is required";
+    }
 
-  // if object is empty -> valid
-  return Object.keys(newErrors).length === 0;
- };
-
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
 
   const handleChange = (e) => {
@@ -174,7 +177,7 @@ export default function BookingForm() {
 
       // save to MongoDB
       axios.post("http://localhost:3000/admin", payload, {
-  headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
 })
 
 
