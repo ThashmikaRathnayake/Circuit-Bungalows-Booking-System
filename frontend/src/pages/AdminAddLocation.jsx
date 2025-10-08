@@ -65,6 +65,18 @@ export default function AdminAddLocation({ bungalow }) {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    
+    // Contact number validation — only 10 digits allowed
+      const phoneRegex = /^[0-9]{10}$/;
+
+      if (
+        (formData.cb_A_No && !phoneRegex.test(formData.cb_A_No)) ||
+        (formData.cb_B_No && !phoneRegex.test(formData.cb_B_No)) ||
+        (formData.cb_No && !phoneRegex.test(formData.cb_No))
+      ) {
+        toast.error("Contact numbers must contain exactly 10 digits.");
+        return; // Stop form submission
+      }
 
     try {
       // Only upload **new files** before saving
